@@ -54,21 +54,36 @@ class Lcsort
     value.to_i
   end
 
-  def self.normalize(callnum, bottomout=false)
+  def self.normalize(callnum, wellform=false, bottomout=false)
   	if match = LC.match(callnum.upcase)
   		alpha, num, dec, c1alpha, c1num, c2alpha, c2num, c3alpha, c3num, extra = match.captures
   		origs = match.captures
     else
-      return callnum
+      if wellform
+        puts callnum
+        return nil
+      else
+        return callnum
+      end
   	end
 
   	if dec.to_s.length > 2
-  		return callnum
+      if wellform
+        puts callnum
+        return nil
+      else
+        return callnum
+      end
   	end
 
   	if !alpha.nil? && !(!num.nil? || !dec.nil? || !c1alpha.nil? || !c1num.nil? || !c2alpha.nil? || !c2num.nil? || !c3alpha.nil? || !c3num.nil?)
   		if !extra.nil?
-  	  	return callnum
+        if wellform
+          puts callnum
+          return nil
+        else
+          return callnum
+        end
   	  end
   	  if bottomout
   	  	return alpha + BOTTOMSPACE * (3 - alpha.length)
