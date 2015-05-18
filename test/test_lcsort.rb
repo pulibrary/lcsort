@@ -39,6 +39,15 @@ class LcsortTest < Minitest::Test
     nil
   ]
 
+  TEST_LEADING_TRAILING = ['.A20',
+    'B31.4 1992.',
+    'Microfilm.'
+  ]
+
+  EXPECTED_REGULAR = ['A20',
+    'B31.4 1992',
+    'MICROFILM'
+  ]
 
   def test_normalization
     TEST_CALLNOS.each_with_index do |callno, i|
@@ -55,6 +64,12 @@ class LcsortTest < Minitest::Test
   def test_wellform
     TEST_CALLNOS.each_with_index do |callno, i|
       assert_equal EXPECTED_WELLFORM[i], Lcsort.normalize(callno, :wellform => true)
+    end
+  end
+
+  def equal_strip
+    TEST_LEADING_TRAILING.each_with_index do |callno, i|
+      assert_equal Lcsort.normalize(EXPECTED_REGULAR[i]), Lcsort.normalize(callno)
     end
   end
 
