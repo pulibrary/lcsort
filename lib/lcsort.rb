@@ -54,12 +54,13 @@ class Lcsort
     value.to_i
   end
 
-  def self.normalize(callnum, wellform=false, bottomout=false)
-  	if match = LC.match(callnum.upcase)
+  def self.normalize(cn, opts = {})
+  	callnum = cn.upcase
+    if match = LC.match(callnum)
   		alpha, num, dec, c1alpha, c1num, c2alpha, c2num, c3alpha, c3num, extra = match.captures
   		origs = match.captures
     else
-      if wellform
+      if opts[:wellform]
         puts callnum
         return nil
       else
@@ -68,7 +69,7 @@ class Lcsort
   	end
 
   	if dec.to_s.length > 2
-      if wellform
+      if opts[:wellform]
         puts callnum
         return nil
       else
@@ -78,14 +79,14 @@ class Lcsort
 
   	if !alpha.nil? && !(!num.nil? || !dec.nil? || !c1alpha.nil? || !c1num.nil? || !c2alpha.nil? || !c2num.nil? || !c3alpha.nil? || !c3num.nil?)
   		if !extra.nil?
-        if wellform
+        if opts[:wellform]
           puts callnum
           return nil
         else
           return callnum
         end
   	  end
-  	  if bottomout
+  	  if opts[:bottomout]
   	  	return alpha + BOTTOMSPACE * (3 - alpha.length)
   	  end
   	  return alpha
@@ -137,7 +138,7 @@ class Lcsort
     (1..9).to_a.reverse_each do |i|
     	lasttop = topnorm.pop
   		if origs[i]
-  			if bottomout
+  			if opts[:bottomout]
   				lasttop = bottomnorm[i..8].join
   			end
   			return topnorm.join + lasttop
