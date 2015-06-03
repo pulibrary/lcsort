@@ -11,7 +11,7 @@ class Lcsort
       (?:VIDEO-D)? # for video stuff
       (?:DVD-ROM)? # DVDs, obviously
       (?:CD-ROM)?  # CDs
-      (?:TAPE-C)?  # Tapes   
+      (?:TAPE-C)?  # Tapes
       \s*
       ([A-Z]{1,3})  # alpha
       \s*
@@ -55,10 +55,10 @@ class Lcsort
   end
 
   def self.normalize(cn, opts = {})
-  	callnum = cn.upcase.gsub(/^[^A-Z0-9]*|[^A-Z0-9]*$/, '')
+    callnum = cn.upcase.gsub(/^[^A-Z0-9]*|[^A-Z0-9]*$/, '')
     if match = LC.match(callnum)
-  		alpha, num, dec, c1alpha, c1num, c2alpha, c2num, c3alpha, c3num, extra = match.captures
-  		origs = match.captures
+      alpha, num, dec, c1alpha, c1num, c2alpha, c2num, c3alpha, c3num, extra = match.captures
+      origs = match.captures
     else
       if opts[:wellform]
         puts callnum
@@ -66,37 +66,37 @@ class Lcsort
       else
         return callnum
       end
-  	end
+    end
 
-  	if dec.to_s.length > 2
+    if dec.to_s.length > 2
       if opts[:wellform]
         puts callnum
         return nil
       else
         return callnum
       end
-  	end
+    end
 
-  	if !alpha.nil? && !(!num.nil? || !dec.nil? || !c1alpha.nil? || !c1num.nil? || !c2alpha.nil? || !c2num.nil? || !c3alpha.nil? || !c3num.nil?)
-  		if !extra.nil?
+    if !alpha.nil? && !(!num.nil? || !dec.nil? || !c1alpha.nil? || !c1num.nil? || !c2alpha.nil? || !c2num.nil? || !c3alpha.nil? || !c3num.nil?)
+      if !extra.nil?
         if opts[:wellform]
           puts callnum
           return nil
         else
           return callnum
         end
-  	  end
-  	  if opts[:bottomout]
-  	  	return alpha + BOTTOMSPACE * (3 - alpha.length)
-  	  end
-  	  return alpha
-  	end
+      end
+      if opts[:bottomout]
+        return alpha + BOTTOMSPACE * (3 - alpha.length)
+      end
+      return alpha
+    end
     enorm = extra.to_s.gsub(/[^A-Z0-9]/, '')
     num = '%04d' % num.to_s.to_i
 
     c1a = c1alpha.nil? ? TOPSPACE : c1alpha
     c2a = c2alpha.nil? ? TOPSPACE : c2alpha
-    c3a = c3alpha.nil? ? TOPSPACE : c3alpha  
+    c3a = c3alpha.nil? ? TOPSPACE : c3alpha
 
 
     topnorm = [
@@ -110,7 +110,7 @@ class Lcsort
       c3a,
       c3num.to_s + TOPDIGIT * filler(3, c3num),
       ' ' + enorm,
-    ]  
+    ]
 
     if !extra.nil?
       return topnorm.join
@@ -130,19 +130,19 @@ class Lcsort
       c2num.to_s + BOTTOMDIGIT * filler(3, c2num),
       c3al,
       c3num.to_s + BOTTOMDIGIT * filler(3, c3num)
-    ]     
+    ]
 
 
 
 
     (1..9).to_a.reverse_each do |i|
-    	lasttop = topnorm.pop
-  		if origs[i]
-  			if opts[:bottomout]
-  				lasttop = bottomnorm[i..8].join
-  			end
-  			return topnorm.join + lasttop
-  		end
+      lasttop = topnorm.pop
+      if origs[i]
+        if opts[:bottomout]
+          lasttop = bottomnorm[i..8].join
+        end
+        return topnorm.join + lasttop
+      end
     end
 
   end
