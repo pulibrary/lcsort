@@ -143,7 +143,17 @@ class TestSortOrders < Minitest::Test
     # they should all be in order too
 
     assert_sorted_order list1 + list2 + list3 + list4 + list5 + list6
+  end
 
+  def test_with_large_decimals
+    assert_sorted_order([
+      "R 241.23 .F2498 1994",
+      "R 241.230001 .F2498 1994",
+      "R 241.231 .F2498 1994",
+      "R 241.244444 .F2498 1994",
+      "R 241.244445 .F2498 1994",
+      "R 241.3 .A498 1994"
+    ])
   end
 
 

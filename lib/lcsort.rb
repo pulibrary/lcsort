@@ -68,7 +68,7 @@ class Lcsort
       end
     end
 
-    if dec.to_s.length > 2
+    if dec.to_s.length > 6
       if opts[:wellform]
         puts callnum
         return nil
@@ -102,7 +102,7 @@ class Lcsort
     topnorm = [
       alpha.to_s + TOPSPACE * filler(3, alpha),
       num.to_s + TOPDIGIT * filler(4, num),
-      dec.to_s + TOPDIGIT * filler(2, dec),
+      dec.to_s + TOPDIGIT * filler(6, dec),
       c1a,
       c1num.to_s + TOPDIGIT * filler(3, c1num),
       c2a,
@@ -123,7 +123,7 @@ class Lcsort
     bottomnorm = [
       alpha.to_s + BOTTOMSPACE * filler(3, alpha),
       num.to_s + BOTTOMDIGIT * filler(4, num),
-      dec.to_s + BOTTOMDIGIT * filler(2, dec),
+      dec.to_s + BOTTOMDIGIT * filler(6, dec),
       c1al,
       c1num.to_s + BOTTOMDIGIT * filler(3, c1num),
       c2al,
