@@ -18,7 +18,7 @@ class LcsortTest < Minitest::Test
     'D  0015400000D220 000 000 1990',
     'E  0008000000C110D220',
     'ZA 4082000000G330M434D540 1998',
-    'MICROFILM'
+    nil
   ]
 
   EXPECTED_ENDRANGE = ['A  0001999999~999~999~999',
@@ -27,7 +27,7 @@ class LcsortTest < Minitest::Test
     'D  0015400000D220 000 000 1990',
     'E  0008000000C110D229~999',
     'ZA 4082000000G330M434D540 1998',
-    'MICROFILM'
+    nil
   ]
 
   EXPECTED_WELLFORM = ['A  0001',
@@ -63,8 +63,13 @@ class LcsortTest < Minitest::Test
 
   def test_wellform
     TEST_CALLNOS.each_with_index do |callno, i|
-      assert_equal EXPECTED_WELLFORM[i], Lcsort.normalize(callno, :wellform => true)
+      assert_equal EXPECTED_WELLFORM[i], Lcsort.normalize(callno)
     end
+  end
+
+  def test_bad_callnums
+    assert_nil Lcsort.normalize("this is not a call number")
+    assert_nil Lcsort.normalize("12234")
   end
 
   def equal_strip

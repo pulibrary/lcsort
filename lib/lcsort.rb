@@ -56,35 +56,22 @@ class Lcsort
 
   def self.normalize(cn, opts = {})
     callnum = cn.upcase.gsub(/^[^A-Z0-9]*|[^A-Z0-9]*$/, '')
-    if match = LC.match(callnum)
-      alpha, num, dec, c1alpha, c1num, c2alpha, c2num, c3alpha, c3num, extra = match.captures
-      origs = match.captures
-    else
-      if opts[:wellform]
-        puts callnum
-        return nil
-      else
-        return callnum
-      end
+    
+    match = LC.match(callnum)
+    unless match
+      return nil
     end
 
+    alpha, num, dec, c1alpha, c1num, c2alpha, c2num, c3alpha, c3num, extra = match.captures
+    origs = match.captures
+    
     if dec.to_s.length > 6
-      if opts[:wellform]
-        puts callnum
-        return nil
-      else
-        return callnum
-      end
+      return nil
     end
 
     if !alpha.nil? && !(!num.nil? || !dec.nil? || !c1alpha.nil? || !c1num.nil? || !c2alpha.nil? || !c2num.nil? || !c3alpha.nil? || !c3num.nil?)
       if !extra.nil?
-        if opts[:wellform]
-          puts callnum
-          return nil
-        else
-          return callnum
-        end
+        return nil
       end
       if opts[:bottomout]
         return alpha + BOTTOMSPACE * (3 - alpha.length)
