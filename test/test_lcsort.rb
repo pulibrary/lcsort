@@ -72,6 +72,14 @@ class LcsortTest < Minitest::Test
     assert_nil Lcsort.normalize("12234")
   end
 
+  def test_parses_weird_numbers
+    # These may NOT be currently sorted correctly, but they parse somehow,
+    # and we want to at least keep it that way, I think.     
+    refute_nil Lcsort.normalize("A1.2 .A54 21st 2010")
+    refute_nil Lcsort.normalize("KF 4558 15th .G8")
+    refute_nil Lcsort.normalize("JX 45.5 2nd .A54 .G888 2010")
+  end
+
   def equal_strip
     TEST_LEADING_TRAILING.each_with_index do |callno, i|
       assert_equal Lcsort.normalize(EXPECTED_REGULAR[i]), Lcsort.normalize(callno)
