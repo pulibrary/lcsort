@@ -156,6 +156,32 @@ class TestSortOrders < Minitest::Test
     ])
   end
 
+  # LC call numbers can have a 'date or other number', usually
+  # a year, in a cutter position, most commonly first. 
+  #
+  # These currently sort correctly more or less accidentally --
+  # they are not parsed correctly, everything including and after
+  # the year ends up in 'extra', but they sort correctly ANYWAY. 
+  #
+  # We have a test to make sure it stays that way. 
+  def test_year_cutter
+    list = [
+            "PX 101.1",
+            "PX 101.1 1989",
+            "PX 101.1 1990",
+            "PX 101.1 1990 .A3",
+            "PX 101.1 1990 .A34",
+            "PX 101.1 1990 .A34 .B55",
+            "PX 101.1 1990 .A34 .B6",
+            "PX 101.1 1990 .A5",
+            "PX 101.1 1992",
+            "PX 101.1 2012",
+            "PX 101.1 .A5"
+           ]
+
+    assert_sorted_order list
+  end
+
 
   def assert_sorted_order(array)
     assert_equal array, array.shuffle.sort_by {|call_num| Lcsort.normalize(call_num)}
