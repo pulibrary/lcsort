@@ -156,6 +156,22 @@ class TestSortOrders < Minitest::Test
     ])
   end
 
+  def test_with_cutter_suffixes
+    assert_sorted_order([
+      "QA 101.1 A101",
+      "QA 101.1 A101a",
+      "QA 101.1 A101b",
+      "QA 101.1 A101 B101"
+    ])
+
+    assert_sorted_order([
+      "QA 101.1 A101 B101",
+      "QA 101.1 A101 B101 1999",
+      "QA 101.1 A101a B101",
+      "QA 101.1 A101b B101"
+    ])
+  end
+
   # LC call numbers can have a 'date or other number', usually
   # a year, in a cutter position, most commonly first. 
   #
@@ -182,6 +198,16 @@ class TestSortOrders < Minitest::Test
     assert_sorted_order list
   end
 
+
+  def x_prefix
+    assert_sorted_order([
+      "BP190.5.W34 K437 1993",
+      "BP190.5.W35 A22 2000",
+      "BP190.5.W35 xA22 2001",
+      "BP190.5.W35 A222 1990",
+      "BP190.5.W35 xF3"
+    ])
+  end
 
   def assert_sorted_order(array)
     assert_equal array, array.shuffle.sort_by {|call_num| Lcsort.normalize(call_num)}
