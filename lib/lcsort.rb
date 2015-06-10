@@ -22,23 +22,23 @@ class Lcsort
       \s*
       (?:               # optional cutter
         \.? \s*
-        ([A-Z])      # cutter letter  c1alpha
+        ([a-z]?[A-Z])      # cutter letter  c1alpha
         \s*
-        (\d+ | \Z)        # cutter numbers  c1num
+        (\d{1,6}[a-z]{0,2} | \Z)        # cutter numbers  c1num
       )?
       \s*
       (?:               # optional cutter
         \.? \s*
-        ([A-Z])      # cutter letter  c2alpha
+        ([a-z]?[A-Z])      # cutter letter  c2alpha
         \s*
-        (\d+ | \Z)        # cutter numbers  c2num
+        (\d{1,6}[a-z]{0,2} | \Z)        # cutter numbers  c2num
       )?
       \s*
       (?:               # optional cutter
         \.? \s*
-        ([A-Z])      # cutter letter  c3alpha
+        ([a-z]?[A-Z])      # cutter letter  c3alpha
         \s*
-        (\d+ | \Z)        # cutter numbers  c3num
+        (\d{1,6}[a-z]{0,2} | \Z)        # cutter numbers  c3num
       )?
       (\s+.+?)?        # everthing else extra
       \s*$/x
@@ -55,7 +55,7 @@ class Lcsort
   end
 
   def self.normalize(cn, opts = {})
-    callnum = cn.upcase.gsub(/^[^A-Z0-9]*|[^A-Z0-9]*$/, '')
+    callnum = cn[0][/[a-z]/].nil? ? cn : cn.upcase
     
     match = LC.match(callnum)
     unless match
@@ -65,7 +65,7 @@ class Lcsort
     alpha, num, dec, c1alpha, c1num, c2alpha, c2num, c3alpha, c3num, extra = match.captures
     origs = match.captures
     
-    if dec.to_s.length > 6
+    if dec.to_s.length > 6 || num.to_s.length > 4
       return nil
     end
 
@@ -78,25 +78,33 @@ class Lcsort
       end
       return alpha
     end
-    enorm = extra.to_s.gsub(/[^A-Z0-9]/, '')
+
+    c1alpha.gsub!(/[a-z]/, '') unless c1alpha.nil?
+    c2alpha.gsub!(/[a-z]/, '') unless c2alpha.nil?
+    c3alpha.gsub!(/[a-z]/, '') unless c3alpha.nil?
+
+    c1num.gsub!(/[a-z]{1,2}/) {|m| extra = extra.to_s + m; m=''} unless c1num.nil?
+    c2num.gsub!(/[a-z]{1,2}/) {|m| extra = extra.to_s + m; m=''} unless c2num.nil?
+    c3num.gsub!(/[a-z]{1,2}/) {|m| extra = extra.to_s + m; m=''} unless c3num.nil?
+
+    enorm = extra.to_s.upcase.gsub(/[^A-Z0-9]/, '')
     num = '%04d' % num.to_s.to_i
 
     c1a = c1alpha.nil? ? TOPSPACE : c1alpha
     c2a = c2alpha.nil? ? TOPSPACE : c2alpha
     c3a = c3alpha.nil? ? TOPSPACE : c3alpha
 
-
     topnorm = [
       alpha.to_s + TOPSPACE * filler(3, alpha),
       num.to_s + TOPDIGIT * filler(4, num),
       dec.to_s + TOPDIGIT * filler(6, dec),
       c1a,
-      c1num.to_s + TOPDIGIT * filler(3, c1num),
+      c1num.to_s + TOPDIGIT * filler(6, c1num),
       c2a,
-      c2num.to_s + TOPDIGIT * filler(3, c2num),
+      c2num.to_s + TOPDIGIT * filler(6, c2num),
       c3a,
-      c3num.to_s + TOPDIGIT * filler(3, c3num),
-      ' ' + enorm,
+      c3num.to_s + TOPDIGIT * filler(6, c3num),
+      ' ' + enorm
     ]
 
     if !extra.nil?
@@ -105,18 +113,18 @@ class Lcsort
 
     c1al = c1alpha.nil? ? BOTTOMSPACE : c1alpha
     c2al = c2alpha.nil? ? BOTTOMSPACE : c2alpha
-    c3al = c3alpha.nil? ? BOTTOMSPACE : c3alpha 
+    c3al = c3alpha.nil? ? BOTTOMSPACE : c3alpha
 
     bottomnorm = [
       alpha.to_s + BOTTOMSPACE * filler(3, alpha),
       num.to_s + BOTTOMDIGIT * filler(4, num),
       dec.to_s + BOTTOMDIGIT * filler(6, dec),
       c1al,
-      c1num.to_s + BOTTOMDIGIT * filler(3, c1num),
+      c1num.to_s + BOTTOMDIGIT * filler(6, c1num),
       c2al,
-      c2num.to_s + BOTTOMDIGIT * filler(3, c2num),
+      c2num.to_s + BOTTOMDIGIT * filler(6, c2num),
       c3al,
-      c3num.to_s + BOTTOMDIGIT * filler(3, c3num)
+      c3num.to_s + BOTTOMDIGIT * filler(6, c3num)
     ]
 
 

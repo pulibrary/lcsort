@@ -14,39 +14,20 @@ class LcsortTest < Minitest::Test
 
   EXPECTED_NORM = ['A  0001',
     'B  0022300000',
-    'C  0001000000D110',
-    'D  0015400000D220 000 000 1990',
-    'E  0008000000C110D220',
-    'ZA 4082000000G330M434D540 1998',
+    'C  0001000000D110000',
+    'D  0015400000D220000 000000 000000 1990',
+    'E  0008000000C110000D220000',
+    'ZA 4082000000G330000M434000D540000 1998',
     nil
   ]
 
-  EXPECTED_ENDRANGE = ['A  0001999999~999~999~999',
-    'B  0022399999~999~999~999',
-    'C  0001000000D119~999~999',
-    'D  0015400000D220 000 000 1990',
-    'E  0008000000C110D229~999',
-    'ZA 4082000000G330M434D540 1998',
+  EXPECTED_ENDRANGE = ['A  0001999999~999999~999999~999999',
+    'B  0022399999~999999~999999~999999',
+    'C  0001000000D119999~999999~999999',
+    'D  0015400000D220000 000000 000000 1990',
+    'E  0008000000C110000D229999~999999',
+    'ZA 4082000000G330000M434000D540000 1998',
     nil
-  ]
-
-  EXPECTED_WELLFORM = ['A  0001',
-    'B  0022300000',
-    'C  0001000000D110',
-    'D  0015400000D220 000 000 1990',
-    'E  0008000000C110D220',
-    'ZA 4082000000G330M434D540 1998',
-    nil
-  ]
-
-  TEST_LEADING_TRAILING = ['.A20',
-    'B31.4 1992.',
-    'Microfilm.'
-  ]
-
-  EXPECTED_REGULAR = ['A20',
-    'B31.4 1992',
-    'MICROFILM'
   ]
 
   def test_normalization
@@ -61,12 +42,6 @@ class LcsortTest < Minitest::Test
     end
   end
 
-  def test_wellform
-    TEST_CALLNOS.each_with_index do |callno, i|
-      assert_equal EXPECTED_WELLFORM[i], Lcsort.normalize(callno)
-    end
-  end
-
   def test_bad_callnums
     assert_nil Lcsort.normalize("this is not a call number")
     assert_nil Lcsort.normalize("12234")
@@ -78,12 +53,6 @@ class LcsortTest < Minitest::Test
     refute_nil Lcsort.normalize("A1.2 .A54 21st 2010")
     refute_nil Lcsort.normalize("KF 4558 15th .G8")
     refute_nil Lcsort.normalize("JX 45.5 2nd .A54 .G888 2010")
-  end
-
-  def equal_strip
-    TEST_LEADING_TRAILING.each_with_index do |callno, i|
-      assert_equal Lcsort.normalize(EXPECTED_REGULAR[i]), Lcsort.normalize(callno)
-    end
   end
 
 end
