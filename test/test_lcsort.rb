@@ -39,16 +39,6 @@ class LcsortTest < Minitest::Test
     nil
   ]
 
-  TEST_LEADING_TRAILING = ['.A20',
-    'B31.4 1992.',
-    'Microfilm.'
-  ]
-
-  EXPECTED_REGULAR = ['A20',
-    'B31.4 1992',
-    'MICROFILM'
-  ]
-
   def test_normalization
     TEST_CALLNOS.each_with_index do |callno, i|
       assert_equal EXPECTED_NORM[i], Lcsort.normalize(callno)
@@ -78,12 +68,6 @@ class LcsortTest < Minitest::Test
     refute_nil Lcsort.normalize("A1.2 .A54 21st 2010")
     refute_nil Lcsort.normalize("KF 4558 15th .G8")
     refute_nil Lcsort.normalize("JX 45.5 2nd .A54 .G888 2010")
-  end
-
-  def equal_strip
-    TEST_LEADING_TRAILING.each_with_index do |callno, i|
-      assert_equal Lcsort.normalize(EXPECTED_REGULAR[i]), Lcsort.normalize(callno)
-    end
   end
 
 end

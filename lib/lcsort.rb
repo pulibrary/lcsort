@@ -55,7 +55,7 @@ class Lcsort
   end
 
   def self.normalize(cn, opts = {})
-    callnum = cn.upcase.gsub(/^[^A-Z0-9]*|[^A-Z0-9]*$/, '')
+    callnum = cn.upcase
     
     match = LC.match(callnum)
     unless match
