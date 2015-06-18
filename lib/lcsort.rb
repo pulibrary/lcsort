@@ -61,11 +61,7 @@ class Lcsort
   end
 
 
-  def filler(slot, digit)
-    value = slot - digit.to_s.length
-    value = 0 if value < 0
-    value.to_i
-  end
+
 
   def normalize(cn, opts = {})
     callnum = cn.upcase
@@ -99,16 +95,18 @@ class Lcsort
     c3a = c3alpha.nil? ? TOPSPACE : c3alpha
 
 
+
+
     topnorm = [
-      alpha.to_s + TOPSPACE * filler(alpha_width, alpha),
-      num.to_s + TOPDIGIT * filler(class_whole_width, num),
-      dec.to_s + TOPDIGIT * filler(class_dec_width, dec),
-      c1a,
-      c1num.to_s + TOPDIGIT * filler(cutter_width - 1, c1num),
+      right_fill( alpha, alpha_width,        TOPSPACE),
+      right_fill( num,   class_whole_width,  TOPDIGIT),
+      right_fill( dec,   class_dec_width,    TOPDIGIT),
+      c1a, 
+      right_fill( c1num, cutter_width - 1,   TOPDIGIT),
       c2a,
-      c2num.to_s + TOPDIGIT * filler(cutter_width - 1, c2num),
+      right_fill( c2num, cutter_width - 1,   TOPDIGIT),
       c3a,
-      c3num.to_s + TOPDIGIT * filler(cutter_width - 1, c3num),
+      right_fill( c3num, cutter_width - 1,   TOPDIGIT),
       ' ' + enorm,
     ]
 
@@ -121,15 +119,15 @@ class Lcsort
     c3al = c3alpha.nil? ? BOTTOMSPACE : c3alpha 
 
     bottomnorm = [
-      alpha.to_s + BOTTOMSPACE * filler(alpha_width, alpha),
-      num.to_s + BOTTOMDIGIT * filler(class_whole_width, num),
-      dec.to_s + BOTTOMDIGIT * filler(class_dec_width, dec),
+      right_fill( alpha,  alpha_width,       BOTTOMSPACE),
+      right_fill( num,    class_whole_width, BOTTOMDIGIT),
+      right_fill( dec,    class_dec_width,   BOTTOMDIGIT),      
       c1al,
-      c1num.to_s + BOTTOMDIGIT * filler(cutter_width - 1, c1num),
+      right_fill( c1num,  cutter_width - 1,  BOTTOMDIGIT),
       c2al,
-      c2num.to_s + BOTTOMDIGIT * filler(cutter_width - 1, c2num),
+      right_fill( c2num,  cutter_width - 1,  BOTTOMDIGIT),
       c3al,
-      c3num.to_s + BOTTOMDIGIT * filler(cutter_width - 1, c3num)
+      right_fill( c3num,  cutter_width - 1, BOTTOMDIGIT)
     ]
 
 
@@ -146,6 +144,18 @@ class Lcsort
     end
 
   end
+
+  def right_fill(content, width, padding)
+    content.to_s + (padding * filler(width, content))
+  end
+
+  def filler(slot, digit)
+    value = slot - digit.to_s.length
+    value = 0 if value < 0
+    value.to_i
+  end
+
+
 
   # puts normalize(ARGV[0], ARGV[1])
 end
