@@ -90,22 +90,16 @@ class Lcsort
     enorm = extra.to_s.gsub(/[^A-Z0-9]/, '')
     num = '%04d' % num.to_s.to_i
 
-    c1a = c1alpha.nil? ? TOPSPACE : c1alpha
-    c2a = c2alpha.nil? ? TOPSPACE : c2alpha
-    c3a = c3alpha.nil? ? TOPSPACE : c3alpha
-
-
-
 
     topnorm = [
       right_fill( alpha, alpha_width,        TOPSPACE),
       right_fill( num,   class_whole_width,  TOPDIGIT),
       right_fill( dec,   class_dec_width,    TOPDIGIT),
-      c1a, 
+      c1alpha || TOPSPACE, 
       right_fill( c1num, cutter_width - 1,   TOPDIGIT),
-      c2a,
+      c2alpha || TOPSPACE,
       right_fill( c2num, cutter_width - 1,   TOPDIGIT),
-      c3a,
+      c3alpha || TOPSPACE,
       right_fill( c3num, cutter_width - 1,   TOPDIGIT),
       ' ' + enorm,
     ]
@@ -114,19 +108,15 @@ class Lcsort
       return topnorm.join
     end
 
-    c1al = c1alpha.nil? ? BOTTOMSPACE : c1alpha
-    c2al = c2alpha.nil? ? BOTTOMSPACE : c2alpha
-    c3al = c3alpha.nil? ? BOTTOMSPACE : c3alpha 
-
     bottomnorm = [
       right_fill( alpha,  alpha_width,       BOTTOMSPACE),
       right_fill( num,    class_whole_width, BOTTOMDIGIT),
       right_fill( dec,    class_dec_width,   BOTTOMDIGIT),      
-      c1al,
+      c1alpha || BOTTOMSPACE,
       right_fill( c1num,  cutter_width - 1,  BOTTOMDIGIT),
-      c2al,
+      c2alpha || BOTTOMSPACE,
       right_fill( c2num,  cutter_width - 1,  BOTTOMDIGIT),
-      c3al,
+      c3alpha || BOTTOMSPACE,
       right_fill( c3num,  cutter_width - 1, BOTTOMDIGIT)
     ]
 
