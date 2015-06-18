@@ -146,15 +146,12 @@ class Lcsort
   end
 
   def right_fill(content, width, padding)
-    content.to_s + (padding * filler(width, content))
-  end
+    content = content.to_s
+    fill_spots = width - content.length
+    fill_spots = 0 if fill_spots < 0
 
-  def filler(slot, digit)
-    value = slot - digit.to_s.length
-    value = 0 if value < 0
-    value.to_i
+    content.to_s + (padding * fill_spots)
   end
-
 
 
   # puts normalize(ARGV[0], ARGV[1])
