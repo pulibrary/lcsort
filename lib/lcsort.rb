@@ -47,14 +47,27 @@ class Lcsort
   # lc_nospace = lc= /\s*(?:VIDEO-D)?(?:DVD-ROM)?(?:CD-ROM)?(?:TAPE-C)?\s*([A-Z]{1,3})\s*(?:(\d+)(?:\s*?\.\s*?(\d+))?)?\s*(?:\.?\s*([A-Z])\s*(\d+|\Z))?\s*(?:\.?\s*([A-Z])\s*(\d+|\Z))?\s*(?:\.?\s*([A-Z])\s*(\d+|\Z))?(\s+.+?)?\s*$/
   #puts lc.match("HE 8700.7 p6 t44 1983")
 
+  attr_accessor :alpha_width, :class_whole_width, :class_dec_width, :cutter_width
 
-  def self.filler(slot, digit)
+  def initialize()
+    self.alpha_width       = 3
+    self.class_whole_width = 4
+    self.class_dec_width   = 6
+    self.cutter_width      = 4
+  end
+
+  def self.normalize(*args)
+    Lcsort.new.normalize(*args)
+  end
+
+
+  def filler(slot, digit)
     value = slot - digit.to_s.length
     value = 0 if value < 0
     value.to_i
   end
 
-  def self.normalize(cn, opts = {})
+  def normalize(cn, opts = {})
     callnum = cn.upcase
     
     match = LC.match(callnum)
@@ -74,7 +87,7 @@ class Lcsort
         return nil
       end
       if opts[:bottomout]
-        return alpha + BOTTOMSPACE * (3 - alpha.length)
+        return alpha + BOTTOMSPACE * (alpha_width - alpha.length)
       end
       return alpha
     end
@@ -87,15 +100,15 @@ class Lcsort
 
 
     topnorm = [
-      alpha.to_s + TOPSPACE * filler(3, alpha),
-      num.to_s + TOPDIGIT * filler(4, num),
-      dec.to_s + TOPDIGIT * filler(6, dec),
+      alpha.to_s + TOPSPACE * filler(alpha_width, alpha),
+      num.to_s + TOPDIGIT * filler(class_whole_width, num),
+      dec.to_s + TOPDIGIT * filler(class_dec_width, dec),
       c1a,
-      c1num.to_s + TOPDIGIT * filler(3, c1num),
+      c1num.to_s + TOPDIGIT * filler(cutter_width - 1, c1num),
       c2a,
-      c2num.to_s + TOPDIGIT * filler(3, c2num),
+      c2num.to_s + TOPDIGIT * filler(cutter_width - 1, c2num),
       c3a,
-      c3num.to_s + TOPDIGIT * filler(3, c3num),
+      c3num.to_s + TOPDIGIT * filler(cutter_width - 1, c3num),
       ' ' + enorm,
     ]
 
@@ -108,15 +121,15 @@ class Lcsort
     c3al = c3alpha.nil? ? BOTTOMSPACE : c3alpha 
 
     bottomnorm = [
-      alpha.to_s + BOTTOMSPACE * filler(3, alpha),
-      num.to_s + BOTTOMDIGIT * filler(4, num),
-      dec.to_s + BOTTOMDIGIT * filler(6, dec),
+      alpha.to_s + BOTTOMSPACE * filler(alpha_width, alpha),
+      num.to_s + BOTTOMDIGIT * filler(class_whole_width, num),
+      dec.to_s + BOTTOMDIGIT * filler(class_dec_width, dec),
       c1al,
-      c1num.to_s + BOTTOMDIGIT * filler(3, c1num),
+      c1num.to_s + BOTTOMDIGIT * filler(cutter_width - 1, c1num),
       c2al,
-      c2num.to_s + BOTTOMDIGIT * filler(3, c2num),
+      c2num.to_s + BOTTOMDIGIT * filler(cutter_width - 1, c2num),
       c3al,
-      c3num.to_s + BOTTOMDIGIT * filler(3, c3num)
+      c3num.to_s + BOTTOMDIGIT * filler(cutter_width - 1, c3num)
     ]
 
 
