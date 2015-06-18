@@ -74,7 +74,7 @@ class Lcsort
     alpha, num, dec, c1alpha, c1num, c2alpha, c2num, c3alpha, c3num, extra = match.captures
     origs = match.captures
     
-    if dec.to_s.length > 6
+    if dec.to_s.length > self.class_dec_width
       return nil
     end
 
@@ -87,13 +87,15 @@ class Lcsort
       end
       return alpha
     end
-    enorm = extra.to_s.gsub(/[^A-Z0-9]/, '')
-    num = '%04d' % num.to_s.to_i
 
+    enorm = extra.to_s.gsub(/[^A-Z0-9]/, '')
+
+    # Left-fill whole number with preceding 0's
+    num = "%0#{class_whole_width}d" % num.to_s.to_i
 
     topnorm = [
       right_fill( alpha, alpha_width,        TOPSPACE),
-      right_fill( num,   class_whole_width,  TOPDIGIT),
+      num,
       right_fill( dec,   class_dec_width,    TOPDIGIT),
       c1alpha || TOPSPACE, 
       right_fill( c1num, cutter_width - 1,   TOPDIGIT),
@@ -110,7 +112,7 @@ class Lcsort
 
     bottomnorm = [
       right_fill( alpha,  alpha_width,       BOTTOMSPACE),
-      right_fill( num,    class_whole_width, BOTTOMDIGIT),
+      num,
       right_fill( dec,    class_dec_width,   BOTTOMDIGIT),      
       c1alpha || BOTTOMSPACE,
       right_fill( c1num,  cutter_width - 1,  BOTTOMDIGIT),
@@ -119,9 +121,6 @@ class Lcsort
       c3alpha || BOTTOMSPACE,
       right_fill( c3num,  cutter_width - 1, BOTTOMDIGIT)
     ]
-
-
-
 
     (1..9).to_a.reverse_each do |i|
       lasttop = topnorm.pop
