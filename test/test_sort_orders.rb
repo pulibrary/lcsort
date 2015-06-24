@@ -182,6 +182,25 @@ class TestSortOrders < Minitest::Test
     assert_sorted_order list
   end
 
+  # Make sure extra content sorts appropriately, BEFORE actual
+  # subsequent call number. 
+  def test_extras
+    assert_sorted_order([
+      "R 241",
+      "R 241 extra extra",
+      "R 241 .A2498",
+      "R 241 .A2498 extra extra",
+      "R 241 .G1", 
+      "R 241 .G1 extra extra",
+      "R 241 .G1 .A1",
+      "R 241 .G1 .A1 extra extra",
+      "R 241 .G1 .A2",
+      "R 241 .G1 .A2 extra extra",
+      "R 241 .G1 .B1",
+      "R 242"
+    ])
+  end
+
 
   def assert_sorted_order(array)
     assert_equal array, array.shuffle.sort_by {|call_num| Lcsort.normalize(call_num)}

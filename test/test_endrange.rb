@@ -9,7 +9,7 @@ class TestEndRange < Minitest::Test
   # then the 'next step', and higher than some intermediate forms
   def test_bottomouts
     assert_bottomout_ranges("AB 101", 
-      :higher => ["AC 1"], 
+      :higher => ["AC 1", "ABA 1", "B 1"], 
       :inside => [
         "AB 101 1900",
         "AB 101 other stuff",
