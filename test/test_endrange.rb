@@ -63,6 +63,22 @@ class TestEndRange < Minitest::Test
     ])
   end
 
+  def test_decimal_truncation
+    # bottomout of AB 10.1 includes AB 10.123 for instance -- truncation
+    # on decimals. Not sure why this makes sense, but it's what original
+    # Dueber code did, so we keep it. 
+
+    assert_bottomout_ranges("AB 101.4",
+      :higher => ["AB 101.5", "AB 102", "AC 1"],
+      :inside => [
+        "AB 101.41",
+        "AB 101.41 .A1 .B1",
+        "AB 101.4345",
+        "AB 101.4345 .G1"
+    ])
+
+  end
+
   def test_extra_in_input
     # If 'extra' component is input, bottomout is effecitively ignored,
     # you get standard sort key back. Not exactly sure of the use case,
