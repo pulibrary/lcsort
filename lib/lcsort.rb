@@ -2,10 +2,10 @@
 
 class Lcsort
 
-  TOPSPACE = ' '
-  BOTTOMSPACE = '~'
-  TOPDIGIT = '0'
-  BOTTOMDIGIT = '9'
+  LOW_CHAR = ' '
+  HIGH_CHAR = '~'
+  LOW_DIGIT = '0'
+  HIGH_DIGIT = '9'
 
   LC= /^\s*
       (?:VIDEO-D)? # for video stuff
@@ -83,7 +83,7 @@ class Lcsort
         return nil
       end
       if opts[:bottomout]
-        return alpha + BOTTOMSPACE * (alpha_width - alpha.length)
+        return alpha + HIGH_CHAR * (alpha_width - alpha.length)
       end
       return alpha
     end
@@ -94,15 +94,15 @@ class Lcsort
     num = "%0#{class_whole_width}d" % num.to_s.to_i
 
     topnorm = [
-      right_fill( alpha, alpha_width,        TOPSPACE),
+      right_fill( alpha, alpha_width,        LOW_CHAR),
       num,
-      right_fill( dec,   class_dec_width,    TOPDIGIT),
-      c1alpha || TOPSPACE, 
-      right_fill( c1num, cutter_width - 1,   TOPDIGIT),
-      c2alpha || TOPSPACE,
-      right_fill( c2num, cutter_width - 1,   TOPDIGIT),
-      c3alpha || TOPSPACE,
-      right_fill( c3num, cutter_width - 1,   TOPDIGIT),
+      right_fill( dec,   class_dec_width,    LOW_DIGIT),
+      c1alpha || LOW_CHAR, 
+      right_fill( c1num, cutter_width - 1,   LOW_DIGIT),
+      c2alpha || LOW_CHAR,
+      right_fill( c2num, cutter_width - 1,   LOW_DIGIT),
+      c3alpha || LOW_CHAR,
+      right_fill( c3num, cutter_width - 1,   LOW_DIGIT),
       ' ' + enorm,
     ]
 
@@ -111,15 +111,15 @@ class Lcsort
     end
 
     bottomnorm = [
-      right_fill( alpha,  alpha_width,       BOTTOMSPACE),
+      right_fill( alpha,  alpha_width,       HIGH_CHAR),
       num,
-      right_fill( dec,    class_dec_width,   BOTTOMDIGIT),      
-      c1alpha || BOTTOMSPACE,
-      right_fill( c1num,  cutter_width - 1,  BOTTOMDIGIT),
-      c2alpha || BOTTOMSPACE,
-      right_fill( c2num,  cutter_width - 1,  BOTTOMDIGIT),
-      c3alpha || BOTTOMSPACE,
-      right_fill( c3num,  cutter_width - 1, BOTTOMDIGIT)
+      right_fill( dec,    class_dec_width,   HIGH_DIGIT),      
+      c1alpha || HIGH_CHAR,
+      right_fill( c1num,  cutter_width - 1,  HIGH_DIGIT),
+      c2alpha || HIGH_CHAR,
+      right_fill( c2num,  cutter_width - 1,  HIGH_DIGIT),
+      c3alpha || HIGH_CHAR,
+      right_fill( c3num,  cutter_width - 1, HIGH_DIGIT)
     ]
 
     (1..9).to_a.reverse_each do |i|
