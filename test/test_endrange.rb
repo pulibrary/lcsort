@@ -63,6 +63,22 @@ class TestEndRange < Minitest::Test
     ])
   end
 
+  def test_extra_in_input
+    # If 'extra' component is input, bottomout is effecitively ignored,
+    # you get standard sort key back. Not exactly sure of the use case,
+    # but that's what original Dueber code did so we'll stick with it. 
+    [
+      "AB extra extra",
+      "AB 10 extra extra",
+      "AB 10.1 extra extra",
+      "AB 10.1 .A100 extra extra",
+      "AB 10.1 .A100 .B100 extra extra"
+    ].each do |callno|
+      assert_equal Lcsort.normalize(callno), Lcsort.normalize(callno, :bottomout => true), "Expect bottomout of input with 'extra' component to be the standard normalized form"
+    end
+  end
+
+
   def assert_bottomout_ranges(original, args)
     inside = args[:inside] or raise ArgumentError, "Require :inside list"
     higher = args[:higher] or raise ArgumentError, "Require :higher list"
