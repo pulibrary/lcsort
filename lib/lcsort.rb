@@ -43,13 +43,12 @@ class Lcsort
   # lc_nospace = lc= /\s*(?:VIDEO-D)?(?:DVD-ROM)?(?:CD-ROM)?(?:TAPE-C)?\s*([A-Z]{1,3})\s*(?:(\d+)(?:\s*?\.\s*?(\d+))?)?\s*(?:\.?\s*([A-Z])\s*(\d+|\Z))?\s*(?:\.?\s*([A-Z])\s*(\d+|\Z))?\s*(?:\.?\s*([A-Z])\s*(\d+|\Z))?(\s+.+?)?\s*$/
   #puts lc.match("HE 8700.7 p6 t44 1983")
 
-  attr_accessor :alpha_width, :class_whole_width, :class_dec_width, :cutter_width
+  attr_accessor :alpha_width, :class_whole_width, :class_dec_width
 
   def initialize()
     self.alpha_width       = 3
     self.class_whole_width = 4
     self.class_dec_width   = 6
-    self.cutter_width      = 4
   end
 
   def self.normalize(*args)
@@ -91,7 +90,9 @@ class Lcsort
       normalize_cutter(c1alpha, c1num),
       normalize_cutter(c2alpha, c2num),
       normalize_cutter(c3alpha, c3num),
-      (extra ? (LOW_CHAR + extra.to_s.gsub(/[^A-Z0-9]/, '')) : nil)
+      # Need DOUBLE LOW_CHAR to make sure separate from cutter, 
+      # so "AB 101 [extra]" always sorts before "AB 101 [cutters]"
+      (extra ? (LOW_CHAR + LOW_CHAR + extra.to_s.gsub(/[^A-Z0-9]/, '')) : nil)
     ]
 
 
@@ -120,9 +121,9 @@ class Lcsort
         right_fill( alpha,  alpha_width,       HIGH_CHAR),
         num,
         right_fill( dec,    class_dec_width,   HIGH_DIGIT),
-        normalize_cutter(c1alpha, c1num, HIGH_DIGIT),
-        normalize_cutter(c2alpha, c2num, HIGH_DIGIT),
-        normalize_cutter(c3alpha, c3num, HIGH_DIGIT)
+        normalize_cutter(c1alpha, c1num),
+        normalize_cutter(c2alpha, c2num),
+        normalize_cutter(c3alpha, c3num)
       ]
 
       value = ""
@@ -163,10 +164,10 @@ class Lcsort
     content.to_s + (padding * fill_spots)
   end
 
-  def normalize_cutter(c_alpha_prefix, c_rest, fill_digit = LOW_DIGIT)
+  def normalize_cutter(c_alpha_prefix, c_rest)
     return nil if c_alpha_prefix.nil?
 
-    c_alpha_prefix + right_fill( c_rest, cutter_width - 1,   fill_digit)
+    LOW_CHAR + c_alpha_prefix + c_rest
   end
     
 

@@ -201,6 +201,21 @@ class TestSortOrders < Minitest::Test
     ])
   end
 
+  def test_cutter_suffixes
+    skip "don't handle cutter suffixes yet"
+
+    assert_sorted_order([
+      "QA 101.1 .A101",
+      "QA 101.1 .A101m",
+      "QA 101.1 .A101mb",
+      "QA 101.1 .A101mc",
+      "QA 101.1 .A101 A101",
+      "QA 101.1 .A101 A101zb",
+      "QA 101.1 .A102",
+      "QA 101.1 .A11"
+    ])
+  end
+
 
   def assert_sorted_order(array)
     assert_equal array, array.shuffle.sort_by {|call_num| Lcsort.normalize(call_num)}
