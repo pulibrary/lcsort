@@ -8,6 +8,29 @@ class TestEndRange < Minitest::Test
   # We're testing to make sure the endrange is higher than the original, lower
   # then the 'next step', and higher than some intermediate forms
   def test_bottomouts
+    # We're not sure about this behavior for class-letter only, should
+    # it really allow "ABA" as inside "AB"? But original code did, so we stick
+    # with it. 
+    assert_bottomout_ranges("AB", 
+      :higher => ["AC", "AC 1", "B", "B 1"], 
+      :inside => [
+        "ABA",
+        "ABA 101",
+        "ABZ",
+        "ABZ 101",
+        "ABZ 101 other stuff",
+        "AB 101 1900",
+        "AB 101 other stuff",
+        "AB 101.4",
+        "AB 101.400",
+        "AB 101 .A100",
+        "AB 101.400 .A100",
+        "AB 101.400 .A100 1900",
+        "AB 101.400 .A100 .B300",
+        "AB 101.400 .A100 .B300 .C300",
+        "AB 101.400 .A100 .B300 .C300 1900 other stuff"
+    ])
+
     assert_bottomout_ranges("AB 101", 
       :higher => ["AC 1", "ABA 1", "B 1"], 
       :inside => [
