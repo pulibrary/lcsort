@@ -109,7 +109,18 @@ class TestEndRange < Minitest::Test
         "AB 101.4345",
         "AB 101.4345 .G1"
     ])
+  end
 
+  def test_incomplete_cutter_normalization
+    # I think this was a dueber use case, want to truncate to eg "AB 101 .A"
+
+    assert_bottomout_ranges("AB 101 .A",
+      :higher => ["AB 101 .B1", "AB 102"],
+      :inside => [
+        "AB 101 .A1",
+        "AB 101 .A101",
+        "AB 101 .A1 .B1"
+    ])
   end
 
   def test_extra_in_input
