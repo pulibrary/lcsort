@@ -56,9 +56,6 @@ class Lcsort
     Lcsort.new.normalize(*args)
   end
 
-
-
-
   def normalize(cn, opts = {})
     callnum = cn.upcase
     
@@ -99,35 +96,70 @@ class Lcsort
       right_fill( c2num, cutter_width - 1,   LOW_DIGIT),
       c3alpha || LOW_CHAR,
       right_fill( c3num, cutter_width - 1,   LOW_DIGIT),
-      ' ' + enorm,
+      LOW_CHAR + enorm
     ]
 
-    if !extra.nil?
-      return topnorm.join
-    end
 
-    bottomnorm = [
-      right_fill( alpha,  alpha_width,       HIGH_CHAR),
-      num,
-      right_fill( dec,    class_dec_width,   HIGH_DIGIT),      
-      c1alpha || HIGH_CHAR,
-      right_fill( c1num,  cutter_width - 1,  HIGH_DIGIT),
-      c2alpha || HIGH_CHAR,
-      right_fill( c2num,  cutter_width - 1,  HIGH_DIGIT),
-      c3alpha || HIGH_CHAR,
-      right_fill( c3num,  cutter_width - 1, HIGH_DIGIT)
-    ]
+    if opts[:bottomout] != true || !extra.nil?      
+      # Standard normalization if bottomout wasn't requested, or
+      # we have 'extra' and can't do it. 
 
-    (1..9).to_a.reverse_each do |i|
-      lasttop = topnorm.pop
-      if origs[i]
-        if opts[:bottomout]
-          lasttop = bottomnorm[i..8].join
-        end
-        return topnorm.join + lasttop
+      value = ""
+
+      # First three components: class letter, class whole, class decimal
+      # Always need to be included      
+      (0..2).each do |i|
+        value << topnorm[i]
       end
-    end
 
+      # Rest need to be added only if they exist, cutters and extra
+      (3..(origs.length - 1)).each do |i|
+        value << topnorm[i] if origs[i]
+      end
+      return value
+    else
+      #bottomout top of range normalization
+
+      bottomnorm = [
+        right_fill( alpha,  alpha_width,       HIGH_CHAR),
+        num,
+        right_fill( dec,    class_dec_width,   HIGH_DIGIT),      
+        c1alpha || HIGH_CHAR,
+        right_fill( c1num,  cutter_width - 1,  HIGH_DIGIT),
+        c2alpha || HIGH_CHAR,
+        right_fill( c2num,  cutter_width - 1,  HIGH_DIGIT),
+        c3alpha || HIGH_CHAR,
+        right_fill( c3num,  cutter_width - 1, HIGH_DIGIT)
+      ]
+
+      value = ""
+      # For class letter and whole number, we take the
+      # norm if present, otherwise a bottomed out norm
+      (0..1).each do |i|
+        x = origs[i] ? topnorm[i] : bottomnorm[i]
+        value << x
+      end
+
+      # For class decimal, we use the bottomed out norm I.F.F. we
+      # are the end of the call num, 
+      # to support decimal truncation as in original behavior
+      value << (origs[3].nil? ? bottomnorm[2] : topnorm[2])
+
+      # Rest need to be added in only if they exist -- and we stop before
+      # the final 'extra' which we don't include in bottomout
+      # Last one gets added as a bottomnorm, others as topnorm. 
+      (3..(origs.length -  2)).each do |i|
+        if origs[i]
+          value << (origs[i+1].nil? ? bottomnorm[i] : topnorm[i])
+        end
+      end
+
+      # Add high space on end, to make sure this goes AFTER
+      # everything it truncates. 
+      value << HIGH_CHAR
+
+      return value
+    end
   end
 
   def right_fill(content, width, padding)

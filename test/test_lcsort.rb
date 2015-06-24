@@ -6,10 +6,10 @@ class LcsortTest < Minitest::Test
   def test_normalization
     # pairs, left hand normalizes to right-hand
     [ 
-      ['A1',      'A  0001'],
+      ['A1',      'A  0001000000'],
       ['B22.3',   'B  0022300000'],
       ['C1.D11',  'C  0001000000D110'],
-      ['d15.4 .D22 1990', 'D  0015400000D220 000 000 1990'],  
+      ['d15.4 .D22 1990', 'D  0015400000D220 1990'],  
       ['E8 C11 D22',      'E  0008000000C110D220'],
       ['ZA4082G33M434.D54 1998', 'ZA 4082000000G330M434D540 1998']
     ].each do |call, normalized|
@@ -20,11 +20,11 @@ class LcsortTest < Minitest::Test
   def test_endrange
     # pairs of call number, and expected bottomout/endrange normalized
     [
-      ['A1',     'A  0001999999~999~999~999'],
-      ['B22.3',  'B  0022399999~999~999~999'],
-      ['C1.D11', 'C  0001000000D119~999~999'],
-      ['d15.4 .D22 1990', 'D  0015400000D220 000 000 1990'],
-      ['E8 C11 D22',      'E  0008000000C110D229~999'], 
+      ['A1',     'A  0001999999~'],
+      ['B22.3',  'B  0022399999~'],
+      ['C1.D11', 'C  0001000000D119~'],
+      ['d15.4 .D22 1990', 'D  0015400000D220 1990'],
+      ['E8 C11 D22',      'E  0008000000C110D229~'], 
       ['ZA4082G33M434.D54 1998', 'ZA 4082000000G330M434D540 1998']
     ].each do |call, normalized|
       assert_normalizes_bottomout_as call, normalized
