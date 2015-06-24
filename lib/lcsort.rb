@@ -7,11 +7,7 @@ class Lcsort
   LOW_DIGIT = '0'
   HIGH_DIGIT = '9'
 
-  LC= /^\s*
-      (?:VIDEO-D)? # for video stuff
-      (?:DVD-ROM)? # DVDs, obviously
-      (?:CD-ROM)?  # CDs
-      (?:TAPE-C)?  # Tapes
+  LC= /^
       \s*
       ([A-Z]{1,3})  # alpha
       \s*
