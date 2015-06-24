@@ -81,8 +81,6 @@ class Lcsort
       return alpha
     end
 
-    enorm = extra.to_s.gsub(/[^A-Z0-9]/, '')
-
     # Left-fill whole number with preceding 0's
     num = "%0#{class_whole_width}d" % num.to_s.to_i
 
@@ -90,17 +88,15 @@ class Lcsort
       right_fill( alpha, alpha_width,        LOW_CHAR),
       num,
       right_fill( dec,   class_dec_width,    LOW_DIGIT),
-      c1alpha || LOW_CHAR, 
-      right_fill( c1num, cutter_width - 1,   LOW_DIGIT),
-      c2alpha || LOW_CHAR,
-      right_fill( c2num, cutter_width - 1,   LOW_DIGIT),
-      c3alpha || LOW_CHAR,
-      right_fill( c3num, cutter_width - 1,   LOW_DIGIT),
-      LOW_CHAR + enorm
+      normalize_cutter(c1alpha, c1num),
+      normalize_cutter(c2alpha, c2num),
+      normalize_cutter(c3alpha, c3num),
+      (extra ? (LOW_CHAR + extra.to_s.gsub(/[^A-Z0-9]/, '')) : nil)
     ]
 
 
-    if opts[:bottomout] != true || !extra.nil?      
+    if opts[:bottomout] != true || !extra.nil?   
+
       # Standard normalization if bottomout wasn't requested, or
       # we have 'extra' and can't do it. 
 
@@ -113,8 +109,8 @@ class Lcsort
       end
 
       # Rest need to be added only if they exist, cutters and extra
-      (3..(origs.length - 1)).each do |i|
-        value << topnorm[i] if origs[i]
+      (3..(topnorm.length - 1)).each do |i|
+        value << topnorm[i] if topnorm[i]
       end
       return value
     else
@@ -123,13 +119,10 @@ class Lcsort
       bottomnorm = [
         right_fill( alpha,  alpha_width,       HIGH_CHAR),
         num,
-        right_fill( dec,    class_dec_width,   HIGH_DIGIT),      
-        c1alpha || HIGH_CHAR,
-        right_fill( c1num,  cutter_width - 1,  HIGH_DIGIT),
-        c2alpha || HIGH_CHAR,
-        right_fill( c2num,  cutter_width - 1,  HIGH_DIGIT),
-        c3alpha || HIGH_CHAR,
-        right_fill( c3num,  cutter_width - 1, HIGH_DIGIT)
+        right_fill( dec,    class_dec_width,   HIGH_DIGIT),
+        normalize_cutter(c1alpha, c1num, HIGH_DIGIT),
+        normalize_cutter(c2alpha, c2num, HIGH_DIGIT),
+        normalize_cutter(c3alpha, c3num, HIGH_DIGIT)
       ]
 
       value = ""
@@ -148,9 +141,9 @@ class Lcsort
       # Rest need to be added in only if they exist -- and we stop before
       # the final 'extra' which we don't include in bottomout
       # Last one gets added as a bottomnorm, others as topnorm. 
-      (3..(origs.length -  2)).each do |i|
-        if origs[i]
-          value << (origs[i+1].nil? ? bottomnorm[i] : topnorm[i])
+      (3..(topnorm.length -  2)).each do |i|
+        if topnorm[i]
+          value << (topnorm[i+1].nil? ? bottomnorm[i] : topnorm[i])
         end
       end
 
@@ -170,6 +163,12 @@ class Lcsort
     content.to_s + (padding * fill_spots)
   end
 
+  def normalize_cutter(c_alpha_prefix, c_rest, fill_digit = LOW_DIGIT)
+    return nil if c_alpha_prefix.nil?
+
+    c_alpha_prefix + right_fill( c_rest, cutter_width - 1,   fill_digit)
+  end
+    
 
   # puts normalize(ARGV[0], ARGV[1])
 end
