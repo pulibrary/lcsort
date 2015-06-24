@@ -84,6 +84,16 @@ class TestEndRange < Minitest::Test
         "AB 101.4 .A100 .B211 .C3 1900",
         "AB 101.4 .A100 .B2 1900 extra"
     ])
+
+    assert_bottomout_ranges("E8 C21 D22",
+      :higher => ["E8 C22 D22", "E8 C3", "E8 C21 D23"],
+      :inside => [
+        "E8 C21 D2213",
+        "E8 C21 D2299",
+        "E8 C21 D2299 A13",
+        "E8 C21 D2299 1990",
+    ])
+
   end
 
   def test_decimal_truncation
