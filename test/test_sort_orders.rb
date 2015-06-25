@@ -202,7 +202,7 @@ class TestSortOrders < Minitest::Test
   end
 
   def test_cutter_suffixes
-    skip "don't handle cutter suffixes yet"
+    #skip "don't handle cutter suffixes yet"
 
     assert_sorted_order([
       "QA 101.1 .A101",

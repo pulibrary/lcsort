@@ -19,22 +19,33 @@ class Lcsort
       (?:               # optional cutter
         \.? \s*
         ([A-Z])      # cutter letter  c1alpha
+        # cutter numeric portion is optional entirely IF at end of string, to
+        # support bottomout on partial cutters
+        # optional cutter letter suffixes are also supported
+        # ie .A12ab -- which requires lookahead to make sure not absorbing subsequent
+        # cutter, doh. 
         \s*
-        (\d+ | \Z)        # cutter numbers  c1num
+        (\d+                              # cutter numbers c1num
+          (?: [a-zA-Z]{0,2}(?=[ \.]|\Z))? # ...with optional 1-2 letter suffix
+        | \Z)  
       )?
       \s*
       (?:               # optional cutter
         \.? \s*
         ([A-Z])      # cutter letter  c2alpha
         \s*
-        (\d+ | \Z)        # cutter numbers  c2num
+        (\d+                              # cutter numbers c1num
+          (?: [a-zA-Z]{0,2}(?=[ \.]|\Z))? # ...with optional 1-2 letter suffix
+        | \Z)
       )?
       \s*
       (?:               # optional cutter
         \.? \s*
         ([A-Z])      # cutter letter  c3alpha
         \s*
-        (\d+ | \Z)        # cutter numbers  c3num
+        (\d+                              # cutter numbers c1num
+          (?: [a-zA-Z]{0,2}(?=[ \.]|\Z))? # ...with optional 1-2 letter suffix
+        | \Z) 
       )?
       (\s+.+?)?        # everthing else extra
       \s*$/x
@@ -44,11 +55,20 @@ class Lcsort
   #puts lc.match("HE 8700.7 p6 t44 1983")
 
   attr_accessor :alpha_width, :class_whole_width, :class_dec_width
+  attr_accessor :cutter_prefix_separator
 
   def initialize()
     self.alpha_width       = 3
     self.class_whole_width = 4
     self.class_dec_width   = 6
+
+    # cutter prefix separator must be lower ascii value than digit 0,
+    # but higher than cutter_intermediate_separator
+    self.cutter_prefix_separator       = '.'
+    # cutter intermediate separator separates cutter letter suffixes
+    # ei as in the 'ab' A234ab. It must be higher ascii value than
+    # cutter_prefix_separator
+    #self.cutter_intermediate_separator = '-'
   end
 
   def self.normalize(*args)
@@ -164,10 +184,12 @@ class Lcsort
     content.to_s + (padding * fill_spots)
   end
 
-  def normalize_cutter(c_alpha_prefix, c_rest)
+  def normalize_cutter(c_alpha_prefix, c_rest)    
     return nil if c_alpha_prefix.nil?
 
-    LOW_CHAR + c_alpha_prefix + c_rest
+    c_rest = c_rest.sub(/(.*\d)([a-zA-Z]{1,2})\Z/, '\1-\2')
+
+    self.cutter_prefix_separator + c_alpha_prefix + c_rest
   end
     
 
