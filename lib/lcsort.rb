@@ -51,11 +51,8 @@ class Lcsort
       \s*$/x
 
 
-  # lc_nospace = lc= /\s*(?:VIDEO-D)?(?:DVD-ROM)?(?:CD-ROM)?(?:TAPE-C)?\s*([A-Z]{1,3})\s*(?:(\d+)(?:\s*?\.\s*?(\d+))?)?\s*(?:\.?\s*([A-Z])\s*(\d+|\Z))?\s*(?:\.?\s*([A-Z])\s*(\d+|\Z))?\s*(?:\.?\s*([A-Z])\s*(\d+|\Z))?(\s+.+?)?\s*$/
-  #puts lc.match("HE 8700.7 p6 t44 1983")
-
   attr_accessor :alpha_width, :class_whole_width, :class_dec_width
-  attr_accessor :cutter_prefix_separator
+  attr_accessor :cutter_prefix_separator, :cutter_intermediate_separator
 
   def initialize()
     self.alpha_width       = 3
@@ -68,7 +65,7 @@ class Lcsort
     # cutter intermediate separator separates cutter letter suffixes
     # ei as in the 'ab' A234ab. It must be higher ascii value than
     # cutter_prefix_separator
-    #self.cutter_intermediate_separator = '-'
+    self.cutter_intermediate_separator = '-'
   end
 
   def self.normalize(*args)
@@ -170,11 +167,9 @@ class Lcsort
 
     # Put a low separator before alpha suffix if present, to
     # ensure sort. 
-    c_rest = c_rest.sub(/(.*\d)([a-zA-Z]{1,2})\Z/, '\1-\2')
+    c_rest = c_rest.sub(/(.*\d)([a-zA-Z]{1,2})\Z/, "\\1#{self.cutter_intermediate_separator}\\2")
 
     self.cutter_prefix_separator + c_alpha_prefix + c_rest
   end
     
-
-  # puts normalize(ARGV[0], ARGV[1])
 end
