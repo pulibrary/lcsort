@@ -117,16 +117,16 @@ class TestSortOrders < Minitest::Test
     assert_sorted_order list4
 
     list5 = [
-        # "M5 L3 .K240",
-        # "M5 L3 K240 1900",
-        # "M5 .L3 K240A",
+        "M5 L3 .K240",
+        "M5 L3 K240 1900",
+        #"M5 .L3 K240A",
         # "M5 .L3 K240B M",
-        # "M5 L3 K240 DB",
+        "M5 L3 K240 DB",
         # "M5 .L3 K2 1880 .Q2 1777",  # TODO: Wrong - suffix vs. cutter norm
         # "M5 .L3 K2 .Q2 MD:CRAPO*DMA 1981",
-        "M5 .L3 K2 Q2 .A1",
+        #"M5 .L3 K2 Q2 .A1",
 
-        # "M5 L3 V.188", # title/part suffix
+        #"M5 L3 V.188", # title/part suffix
         "M5 L3 V188", # second cutter
 
     ]
