@@ -84,7 +84,6 @@ class Lcsort
     end
 
     alpha, num, dec, c1alpha, c1num, c2alpha, c2num, c3alpha, c3num, extra = match.captures
-    origs = match.captures
     
     if dec.to_s.length > self.class_dec_width
       return nil
@@ -100,75 +99,57 @@ class Lcsort
       return alpha
     end
 
-    # Left-fill whole number with preceding 0's
-    num = "%0#{class_whole_width}d" % num.to_s.to_i
 
-    topnorm = [
+    normalized_components = [
+      # Right fill alpha class with separators, to ensure sort
       right_fill( alpha, alpha_width,        LOW_CHAR),
-      num,
-      right_fill( dec,   class_dec_width,    LOW_DIGIT),
-      normalize_cutter(c1alpha, c1num),
-      normalize_cutter(c2alpha, c2num),
-      normalize_cutter(c3alpha, c3num),
-      # Need DOUBLE LOW_CHAR to make sure separate from cutter, 
-      # so "AB 101 [extra]" always sorts before "AB 101 [cutters]"
-      (extra ? (LOW_CHAR + LOW_CHAR + extra.to_s.gsub(/[^A-Z0-9]/, '')) : nil)
+      # Left-fill whole number with preceding 0's to ensure sort
+      "%0#{class_whole_width}d" % num.to_s.to_i,
+      # right fill decimal class with 0's, not actually neccesary
+      # for sort in current algorithm, do we keep doing it?
+      right_fill( dec,   class_dec_width,    LOW_DIGIT)
     ]
+    # add cutters only if they are present
+    normalized_components << normalize_cutter(c1alpha, c1num) if c1alpha
+    normalized_components << normalize_cutter(c2alpha, c2num) if c2alpha
+    normalized_components << normalize_cutter(c3alpha, c3num) if c3alpha
+
+    # leave extra as it's own thing for now
+    # Need DOUBLE LOW_CHAR to make sure separate from cutter, 
+    # so "AB 101 [extra]" always sorts before "AB 101 [cutters]"      
+    normalized_extra = (extra ? (LOW_CHAR + LOW_CHAR + extra.to_s.gsub(/[^A-Z0-9]/, '')) : '')
+
 
 
     if opts[:bottomout] != true || !extra.nil?   
-
       # Standard normalization if bottomout wasn't requested, or
       # we have 'extra' and can't do it. 
 
-      value = ""
-
-      # First three components: class letter, class whole, class decimal
-      # Always need to be included      
-      (0..2).each do |i|
-        value << topnorm[i]
-      end
-
-      # Rest need to be added only if they exist, cutters and extra
-      (3..(topnorm.length - 1)).each do |i|
-        value << topnorm[i] if topnorm[i]
-      end
-      return value
+      return normalized_components.join('') << normalized_extra
     else
       #bottomout top of range normalization
 
-      bottomnorm = [
-        right_fill( alpha,  alpha_width,       HIGH_CHAR),
-        num,
-        right_fill( dec,    class_dec_width,   HIGH_DIGIT),
-        normalize_cutter(c1alpha, c1num),
-        normalize_cutter(c2alpha, c2num),
-        normalize_cutter(c3alpha, c3num)
-      ]
-
       value = ""
-      # For class letter and whole number, we take the
-      # norm if present, otherwise a bottomed out norm
-      (0..1).each do |i|
-        x = origs[i] ? topnorm[i] : bottomnorm[i]
-        value << x
-      end
+
+      # We always have a class letter, and add in our normalized
+      # whole number. 
+      value << normalized_components[0]
+      value << normalized_components[1]
 
       # For class decimal, we use the bottomed out norm I.F.F. we
       # are the end of the call num, 
       # to support decimal truncation as in original behavior
-      value << (origs[3].nil? ? bottomnorm[2] : topnorm[2])
-
-      # Rest need to be added in only if they exist -- and we stop before
-      # the final 'extra' which we don't include in bottomout
-      # Last one gets added as a bottomnorm, others as topnorm. 
-      (3..(topnorm.length -  2)).each do |i|
-        if topnorm[i]
-          value << (topnorm[i+1].nil? ? bottomnorm[i] : topnorm[i])
-        end
+      value << if normalized_components.length > 3
+        normalized_components[2]
+      else
+        right_fill( dec,    class_dec_width,   HIGH_DIGIT)
       end
 
-      # Add high space on end, to make sure this goes AFTER
+      # Add in all cutters as already normalized
+      value << normalized_components.slice(3..-1).join('')
+
+      # The extra shouldn't be present if we're in this branch, but we do
+      # need to add a high space on end, to make sure this goes AFTER
       # everything it truncates. 
       value << HIGH_CHAR
 
@@ -187,6 +168,8 @@ class Lcsort
   def normalize_cutter(c_alpha_prefix, c_rest)    
     return nil if c_alpha_prefix.nil?
 
+    # Put a low separator before alpha suffix if present, to
+    # ensure sort. 
     c_rest = c_rest.sub(/(.*\d)([a-zA-Z]{1,2})\Z/, '\1-\2')
 
     self.cutter_prefix_separator + c_alpha_prefix + c_rest
