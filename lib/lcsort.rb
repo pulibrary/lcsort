@@ -96,48 +96,40 @@ class Lcsort
       return alpha
     end
 
+    normal_str = ""
 
-    normalized_components = [
-      # Right fill alpha class with separators, to ensure sort
-      right_fill( alpha, alpha_width,        LOW_CHAR),
-      # Left-fill whole number with preceding 0's to ensure sort
-      "%0#{class_whole_width}d" % num.to_s.to_i,
-    ]
+
+
+    # Right fill alpha class with separators, to ensure sort, we
+    # always have alpha.
+    normal_str << right_fill( alpha, alpha_width,        LOW_CHAR)
+
+    # Left-fill whole number with preceding 0's to ensure sort,
+    # it's all zeroes if we don't have it, that's cool.
+    normal_str << "%0#{class_whole_width}d" % num.to_s.to_i
+
     # decimal class number needs no fill, add it if we have it.
     # relies on fixed width whole number to sort properly.
-    normalized_components << (dec ? dec : '')
+    normal_str << dec  if dec
 
     # add cutters only if they are present
-    normalized_components << normalize_cutter(c1alpha, c1num) if c1alpha
-    normalized_components << normalize_cutter(c2alpha, c2num) if c2alpha
-    normalized_components << normalize_cutter(c3alpha, c3num) if c3alpha
+    normal_str << normalize_cutter(c1alpha, c1num) if c1alpha
+    normal_str << normalize_cutter(c2alpha, c2num) if c2alpha
+    normal_str << normalize_cutter(c3alpha, c3num) if c3alpha
 
-    # leave extra as it's own thing for now
-    # Need DOUBLE LOW_CHAR to make sure separate from cutter, 
-    # so "AB 101 [extra]" always sorts before "AB 101 [cutters]"      
-    normalized_extra = (extra ? (LOW_CHAR + LOW_CHAR + extra.to_s.gsub(/[^A-Z0-9]/, '')) : '')
-
-
-
-    if opts[:bottomout] != true || !extra.nil?   
-      # Standard normalization if bottomout wasn't requested, or
-      # we have 'extra' and can't do it. 
-
-      return normalized_components.join('') << normalized_extra
+    # If we don't have 'extra' and bottomout was requested,
+    # return with high space to provide range limit going
+    # AFTER what's trucated. 
+    if opts[:bottomout] == true && extra.nil?
+      return normal_str << HIGH_CHAR
     else
-      #bottomout top of range normalization
-
-      value = ""
-
-      value << normalized_components.join('')
-
-      # The extra shouldn't be present if we're in this branch, but we do
-      # need to add a high space on end, to make sure this goes AFTER
-      # everything it truncates.
-      value << HIGH_CHAR
-
-      return value
+      # Add normalized extra if we've got it
+      if extra
+        normal_str << (LOW_CHAR + LOW_CHAR + extra.to_s.gsub(/[^A-Z0-9]/, ''))
+      end
+      return normal_str
     end
+
   end
 
   def right_fill(content, width, padding)
