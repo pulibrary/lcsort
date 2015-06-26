@@ -22,13 +22,13 @@ class TestEndRange < Minitest::Test
         "AB 101 1900",
         "AB 101 other stuff",
         "AB 101.4",
-        "AB 101.400",
+        "AB 101.41",
         "AB 101 .A100",
-        "AB 101.400 .A100",
-        "AB 101.400 .A100 1900",
-        "AB 101.400 .A100 .B300",
-        "AB 101.400 .A100 .B300 .C300",
-        "AB 101.400 .A100 .B300 .C300 1900 other stuff"
+        "AB 101.41 .A100",
+        "AB 101.41 .A100 1900",
+        "AB 101.41 .A100 .B300",
+        "AB 101.41 .A100 .B300 .C300",
+        "AB 101.41 .A100 .B300 .C300 1900 other stuff"
     ])
 
     assert_bottomout_ranges("AB 101", 
@@ -37,13 +37,13 @@ class TestEndRange < Minitest::Test
         "AB 101 1900",
         "AB 101 other stuff",
         "AB 101.4",
-        "AB 101.400",
+        "AB 101.41",
         "AB 101 .A100",
-        "AB 101.400 .A100",
-        "AB 101.400 .A100 1900",
-        "AB 101.400 .A100 .B300",
-        "AB 101.400 .A100 .B300 .C300",
-        "AB 101.400 .A100 .B300 .C300 1900 other stuff"
+        "AB 101.41 .A100",
+        "AB 101.41 .A100 1900",
+        "AB 101.41 .A100 .B300",
+        "AB 101.41 .A100 .B300 .C300",
+        "AB 101.41 .A100 .B300 .C300 1900 other stuff"
     ])
 
     assert_bottomout_ranges("AB 101.4", 
@@ -51,13 +51,13 @@ class TestEndRange < Minitest::Test
       :inside => [
         "AB 101.4 1900",
         "AB 101.4 1900 other stuff",
-        "AB 101.400",
+        "AB 101.41",
         "AB 101 .A100",
-        "AB 101.400 .A100",
-        "AB 101.400 .A100 1900",
-        "AB 101.400 .A100 .B300",
-        "AB 101.400 .A100 .B300 .C300",
-        "AB 101.400 .A100 .B300 .C300 1900 other stuff"
+        "AB 101.41 .A100",
+        "AB 101.41 .A100 1900",
+        "AB 101.41 .A100 .B300",
+        "AB 101.41 .A100 .B300 .C300",
+        "AB 101.41 .A100 .B300 .C300 1900 other stuff"
     ])
 
     assert_bottomout_ranges("AB 101.4 .A111", 
@@ -68,9 +68,9 @@ class TestEndRange < Minitest::Test
         "AB 101.4 .A11124 other stuff",
         "AB 101.4 .A111 1900",
         "AB 101.4 .A111 other stuff",
-        "AB 101.400 .A111 .B300",
-        "AB 101.400 .A111 .B300 .C300",
-        "AB 101.400 .A111 .B300 .C300 1900 other stuff"
+        "AB 101.4 .A111 .B300",
+        "AB 101.4 .A111 .B300 .C300",
+        "AB 101.4 .A111 .B300 .C300 1900 other stuff"
     ])
 
     assert_bottomout_ranges("AB 101.4 .A100 .B2", 
