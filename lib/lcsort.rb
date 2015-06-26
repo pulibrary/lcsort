@@ -102,10 +102,11 @@ class Lcsort
       right_fill( alpha, alpha_width,        LOW_CHAR),
       # Left-fill whole number with preceding 0's to ensure sort
       "%0#{class_whole_width}d" % num.to_s.to_i,
-      # right fill decimal class with 0's, not actually neccesary
-      # for sort in current algorithm, do we keep doing it?
-      right_fill( dec,   class_dec_width,    LOW_DIGIT)
     ]
+    # decimal class number needs no fill, add it if we have it.
+    # relies on fixed width whole number to sort properly.
+    normalized_components << (dec ? dec : '')
+
     # add cutters only if they are present
     normalized_components << normalize_cutter(c1alpha, c1num) if c1alpha
     normalized_components << normalize_cutter(c2alpha, c2num) if c2alpha
@@ -128,26 +129,11 @@ class Lcsort
 
       value = ""
 
-      # We always have a class letter, and add in our normalized
-      # whole number. 
-      value << normalized_components[0]
-      value << normalized_components[1]
-
-      # For class decimal, we use the bottomed out norm I.F.F. we
-      # are the end of the call num, 
-      # to support decimal truncation as in original behavior
-      value << if normalized_components.length > 3
-        normalized_components[2]
-      else
-        right_fill( dec,    class_dec_width,   HIGH_DIGIT)
-      end
-
-      # Add in all cutters as already normalized
-      value << normalized_components.slice(3..-1).join('')
+      value << normalized_components.join('')
 
       # The extra shouldn't be present if we're in this branch, but we do
       # need to add a high space on end, to make sure this goes AFTER
-      # everything it truncates. 
+      # everything it truncates.
       value << HIGH_CHAR
 
       return value

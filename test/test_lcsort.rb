@@ -1,17 +1,27 @@
 require 'minitest/autorun'
 require 'lcsort'
 
+# We have a few tests for expected normalized output, just for
+# sanity check. But mainly the semantic tests in test_lcsort
+# and test_endrange ensure expected behavior from our sort keys.
+#
+# But if changes to code require changes to these tests, it probably
+# means sortkeys are no longer compatible with prior version, even
+# if semantics are maintained.
 class LcsortTest < Minitest::Test
+
+
 
   def test_normalization
     # pairs, left hand normalizes to right-hand
     [ 
-      ['A1',      'A  0001000000'],
-      ['B22.3',   'B  0022300000'],
-      ['C1.D11',  'C  0001000000.D11'],
-      ['d15.4 .D22 1990', 'D  0015400000.D22  1990'],  
-      ['E8 C11 D22',      'E  0008000000.C11.D22'],
-      ['ZA4082G33M434.D54 1998', 'ZA 4082000000.G33.M434.D54  1998']
+      ['A1',      'A  0001'],
+      ['B22.3',   'B  00223'],
+      ['C1.D11',  'C  0001.D11'],
+      ['d15.4 .D22 1990', 'D  00154.D22  1990'],  
+      ['d15.123456 .D22 1990', 'D  0015123456.D22  1990'],
+      ['E8 C11 D22',      'E  0008.C11.D22'],
+      ['ZA4082G33M434.D54 1998', 'ZA 4082.G33.M434.D54  1998']
     ].each do |call, normalized|
       assert_normalizes_as call, normalized
     end
@@ -20,10 +30,10 @@ class LcsortTest < Minitest::Test
   def test_cutter_suffixes
     # pairs, left hand normalizes to right-hand
     [ 
-      ['A1 .A1a',      'A  0001000000.A1-A'],
-      ['A1 .A1 .B32a', 'A  0001000000.A1.B32-A'],
-      ['A1 .A1a .B32a .C33 extra', 'A  0001000000.A1-A.B32-A.C33  EXTRA'],
-      ['A1 .A3 .B4 .C33ab extra',  'A  0001000000.A3.B4.C33-AB  EXTRA']
+      ['A1 .A1a',      'A  0001.A1-A'],
+      ['A1 .A1 .B32a', 'A  0001.A1.B32-A'],
+      ['A1 .A1a .B32a .C33 extra', 'A  0001.A1-A.B32-A.C33  EXTRA'],
+      ['A1 .A3 .B4 .C33ab extra',  'A  0001.A3.B4.C33-AB  EXTRA']
     ].each do |call, normalized|
       assert_normalizes_as call, normalized
     end
@@ -32,12 +42,12 @@ class LcsortTest < Minitest::Test
   def test_endrange
     # pairs of call number, and expected bottomout/endrange normalized
     [
-      ['A1',     'A  0001999999~'],
-      ['B22.3',  'B  0022399999~'],
-      ['C1.D11', 'C  0001000000.D11~'],
-      ['d15.4 .D22 1990', 'D  0015400000.D22  1990'],
-      ['E8 C11 D22',      'E  0008000000.C11.D22~'], 
-      ['ZA4082G33M434.D54 1998', 'ZA 4082000000.G33.M434.D54  1998']
+      ['A1',     'A  0001~'],
+      ['B22.3',  'B  00223~'],
+      ['C1.D11', 'C  0001.D11~'],
+      ['d15.4 .D22 1990', 'D  00154.D22  1990'],
+      ['E8 C11 D22',      'E  0008.C11.D22~'], 
+      ['ZA4082G33M434.D54 1998', 'ZA 4082.G33.M434.D54  1998']
     ].each do |call, normalized|
       assert_normalizes_bottomout_as call, normalized
     end      
