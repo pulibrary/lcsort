@@ -34,7 +34,7 @@ class Lcsort
         \.? \s*
         ([A-Z])      # cutter letter  c2alpha
         \s*
-        (\d+                              # cutter numbers c1num
+        (\d+                              # cutter numbers c2num
           (?: [a-zA-Z]{0,2}(?=[ \.]|\Z))? # ...with optional 1-2 letter suffix
         | \Z)
       )?
@@ -43,7 +43,7 @@ class Lcsort
         \.? \s*
         ([A-Z])      # cutter letter  c3alpha
         \s*
-        (\d+                              # cutter numbers c1num
+        (\d+                              # cutter numbers c3num
           (?: [a-zA-Z]{0,2}(?=[ \.]|\Z))? # ...with optional 1-2 letter suffix
         | \Z)
       )?
