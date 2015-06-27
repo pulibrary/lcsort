@@ -51,13 +51,12 @@ class Lcsort
       \s*$/x
 
 
-  attr_accessor :alpha_width, :class_whole_width, :class_dec_width
+  attr_accessor :alpha_width, :class_whole_width
   attr_accessor :cutter_prefix_separator, :cutter_intermediate_separator
 
   def initialize()
     self.alpha_width       = 3
     self.class_whole_width = 4
-    self.class_dec_width   = 6
 
     # cutter prefix separator must be lower ascii value than digit 0,
     # but higher than cutter_intermediate_separator
@@ -81,8 +80,9 @@ class Lcsort
     end
 
     alpha, num, dec, c1alpha, c1num, c2alpha, c2num, c3alpha, c3num, extra = match.captures
-    
-    if dec.to_s.length > self.class_dec_width
+
+    # We can't handle a class number wider than the space we have
+    if num && num.length > self.class_whole_width
       return nil
     end
 
