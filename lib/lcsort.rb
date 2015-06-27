@@ -13,7 +13,7 @@ class Lcsort
       \s*
       (?:         # optional numbers with optional decimal point
         (\d+)     # num
-        (?:\s*?\.\s*?(\d+))?
+        (?:\s*?\.\s*?(\d+))?  # dec
       )?
       \s*
       (?:               # optional cutter
@@ -23,11 +23,11 @@ class Lcsort
         # support bottomout on partial cutters
         # optional cutter letter suffixes are also supported
         # ie .A12ab -- which requires lookahead to make sure not absorbing subsequent
-        # cutter, doh. 
+        # cutter, doh.
         \s*
         (\d+                              # cutter numbers c1num
           (?: [a-zA-Z]{0,2}(?=[ \.]|\Z))? # ...with optional 1-2 letter suffix
-        | \Z)  
+        | \Z)
       )?
       \s*
       (?:               # optional cutter
@@ -45,7 +45,7 @@ class Lcsort
         \s*
         (\d+                              # cutter numbers c1num
           (?: [a-zA-Z]{0,2}(?=[ \.]|\Z))? # ...with optional 1-2 letter suffix
-        | \Z) 
+        | \Z)
       )?
       (\s+.+?)?        # everthing else extra
       \s*$/x
@@ -73,7 +73,7 @@ class Lcsort
 
   def normalize(cn, opts = {})
     callnum = cn.upcase
-    
+
     match = LC.match(callnum)
     unless match
       return nil
@@ -93,7 +93,7 @@ class Lcsort
     normal_str << right_fill( alpha, alpha_width,        LOW_CHAR)
 
     # Left-fill whole number with preceding 0's to ensure sort,
-    # Only needed if present, sort will work right regardless. 
+    # Only needed if present, sort will work right regardless.
     if num
       normal_str << "%0#{class_whole_width}d" % num.to_s.to_i
     end
@@ -136,14 +136,14 @@ class Lcsort
     content.to_s + (padding * fill_spots)
   end
 
-  def normalize_cutter(c_alpha_prefix, c_rest)    
+  def normalize_cutter(c_alpha_prefix, c_rest)
     return nil if c_alpha_prefix.nil?
 
     # Put a low separator before alpha suffix if present, to
-    # ensure sort. 
+    # ensure sort.
     c_rest = c_rest.sub(/(.*\d)([a-zA-Z]{1,2})\Z/, "\\1#{self.cutter_intermediate_separator}\\2")
 
     self.cutter_prefix_separator + c_alpha_prefix + c_rest
   end
-    
+
 end
