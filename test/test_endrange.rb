@@ -8,17 +8,12 @@ class TestEndRange < Minitest::Test
   # We're testing to make sure the endrange is higher than the original, lower
   # then the 'next step', and higher than some intermediate forms
   def test_bottomouts
-    # We're not sure about this behavior for class-letter only, should
-    # it really allow "ABA" as inside "AB"? But original code did, so we stick
-    # with it. 
+    # bottomout for "A" only finds class "A", not multi-letter
+    # classes like "AB" or "ABB".  You can bottomout on AZZ if
+    # if you want. 
     assert_bottomout_ranges("AB", 
-      :higher => ["AC", "AC 1", "B", "B 1"], 
+      :higher => ["ABA", "ABA 101", "ABZ 101 .A1", "AC", "AC 1", "B", "B 1"], 
       :inside => [
-        "ABA",
-        "ABA 101",
-        "ABZ",
-        "ABZ 101",
-        "ABZ 101 other stuff",
         "AB 101 1900",
         "AB 101 other stuff",
         "AB 101.4",

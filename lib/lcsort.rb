@@ -90,10 +90,6 @@ class Lcsort
       if !extra.nil?
         return nil
       end
-      if opts[:bottomout]
-        return alpha + HIGH_CHAR * (alpha_width - alpha.length)
-      end
-      return alpha
     end
 
     normal_str = ""
@@ -105,8 +101,10 @@ class Lcsort
     normal_str << right_fill( alpha, alpha_width,        LOW_CHAR)
 
     # Left-fill whole number with preceding 0's to ensure sort,
-    # it's all zeroes if we don't have it, that's cool.
-    normal_str << "%0#{class_whole_width}d" % num.to_s.to_i
+    # Only needed if present, sort will work right regardless. 
+    if num
+      normal_str << "%0#{class_whole_width}d" % num.to_s.to_i
+    end
 
     # decimal class number needs no fill, add it if we have it.
     # relies on fixed width whole number to sort properly.
