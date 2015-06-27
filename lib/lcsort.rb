@@ -86,15 +86,7 @@ class Lcsort
       return nil
     end
 
-    if !alpha.nil? && !(!num.nil? || !dec.nil? || !c1alpha.nil? || !c1num.nil? || !c2alpha.nil? || !c2num.nil? || !c3alpha.nil? || !c3num.nil?)
-      if !extra.nil?
-        return nil
-      end
-    end
-
     normal_str = ""
-
-
 
     # Right fill alpha class with separators, to ensure sort, we
     # always have alpha.
@@ -117,10 +109,16 @@ class Lcsort
 
     # If we don't have 'extra' and bottomout was requested,
     # return with high space to provide range limit going
-    # AFTER what's trucated. 
+    # AFTER what's trucated.
     if opts[:bottomout] == true && extra.nil?
       return normal_str << HIGH_CHAR
     else
+      # require an alpha and a num to be a good call number,
+      # although above in bottomout we'll allow just alpha.
+      unless alpha && num
+        return nil
+      end
+
       # Add normalized extra if we've got it
       if extra
         normal_str << (LOW_CHAR + LOW_CHAR + extra.to_s.gsub(/[^A-Z0-9]/, ''))

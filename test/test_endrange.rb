@@ -12,7 +12,7 @@ class TestEndRange < Minitest::Test
     # classes like "AB" or "ABB".  You can bottomout on AZZ if
     # if you want. 
     assert_bottomout_ranges("AB", 
-      :higher => ["ABA", "ABA 101", "ABZ 101 .A1", "AC", "AC 1", "B", "B 1"], 
+      :higher => ["ABA 101", "ABZ 101 .A1", "AC 1", "B 1"], 
       :inside => [
         "AB 101 1900",
         "AB 101 other stuff",
@@ -141,7 +141,7 @@ class TestEndRange < Minitest::Test
     normalized = Lcsort.normalize(original)
     normalized_end = Lcsort.normalize(original, :bottomout => true)
 
-    assert normalized < normalized_end, "Expected bottomout to be higher than straight normalized `#{original}`"
+    assert normalized.nil? || normalized < normalized_end, "Expected bottomout to be higher than straight normalized `#{original}`"
 
     higher.each do |call|
       assert normalized_end < Lcsort.normalize(call), "expected bottomout(#{original}) to be less than #{call}"
