@@ -61,6 +61,10 @@ class LcsortTest < Minitest::Test
     # Too long a class number, we only have space for four digits
     assert_nil Lcsort.normalize("AB 12345")
     assert_nil Lcsort.normalize("AB 12345.22")
+
+    # A class number plus extra ain't enough to be
+    # a good call number.
+    assert_nil Lcsort.normalize("AB this is not a call number")
     # too long a decimal
     #assert_nil Lcsort.normalize("AB 10.111111111111")
   end
