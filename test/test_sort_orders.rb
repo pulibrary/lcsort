@@ -78,10 +78,10 @@ class TestSortOrders < Minitest::Test
         "M5 L3 1902",
 
         # Lcsort, can't handle volume information properly yet
-        #"M5 L3 1902 V.2",
-        #"M5 L3 1902 V2",
-        #"M5 .L3 1902 V2 TANEYTOWN",
-        #"M5 L3 1902V",
+        "M5 L3 1902 V.2",
+        "M5 L3 1902 V2",
+        "M5 .L3 1902 V2 TANEYTOWN",
+        # "M5 L3 1902V",
         # first cutter L3 vol/part info 2000
         "M5 .L3 2000 .K2 1880",
 
@@ -108,20 +108,20 @@ class TestSortOrders < Minitest::Test
         "M5 .L3 K2 NO.1 1880", # vol info NO.1
         "M5 .L3 K2 OP.7:NO.6 1880",
         "M5 .L3 K2 OP.7:NO.6 1882",
-        #"M5 .L3 K2 OP.7:NO.51 1880",  # can't do this yet
-        # "M5 .L3 K2 OP.8",
-        # "M5 .L3 K2 OP.79",
-        # "M5 .L3 K2 OP.789",
-        # "M5 .L3 K2 Q2 1880" # suffix Q2
+        "M5 .L3 K2 OP.7:NO.51 1880",  
+        "M5 .L3 K2 OP.8",
+        "M5 .L3 K2 OP.79",
+        "M5 .L3 K2 OP.789",
+        #"M5 .L3 K2 Q2 1880" # suffix Q2
     ]
     assert_sorted_order list4
 
     list5 = [
         "M5 L3 .K240",
         "M5 L3 K240 1900",
-        #"M5 .L3 K240A",
-        # "M5 .L3 K240B M",
-        "M5 L3 K240 DB",
+        "M5 .L3 K240A",
+        "M5 .L3 K240B M",
+        #"M5 L3 K240 DB",
         # "M5 .L3 K2 1880 .Q2 1777",  # TODO: Wrong - suffix vs. cutter norm
         # "M5 .L3 K2 .Q2 MD:CRAPO*DMA 1981",
         #"M5 .L3 K2 Q2 .A1",
