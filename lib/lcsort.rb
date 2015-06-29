@@ -1,7 +1,5 @@
 # encoding: utf-8
 
-require 'lcsort/volume_abbreviations'
-
 # The sorting code is organized as a class for code organization
 # and possible future parameterization. 
 #
@@ -99,11 +97,6 @@ class Lcsort
     # especially cutter_extralow_separator. 
     # Doubling the cutter_extralow_separator works. 
     self.extra_separator           = (self.cutter_extralow_separator * 2)
-
-    # Prefixes in 'extra' that precede whole numbers that need
-    # to be padded for sort. Prefix followed by period, optional spacing,
-    # and number. Two capturing groups, the prefix as matched, and the number. 
-    self.extra_num_regexp = /(\b#{Regexp.union( Lcsort::VolumeAbbreviations )}\. *)(\d+)/
 
     # Only state should be configuration, not about individual call numbers. 
     # We re-use this for multiple call numbers, and don't want callnum-specific
@@ -230,10 +223,10 @@ class Lcsort
   # and adding an ultra low prefix separator. 
   def normalize_extra(extra)
     # Left-pad any volume/number type designations with zeros, so
-    # they sort appropriately. 
-    extra_normalized = extra.gsub(self.extra_num_regexp) do |match|
-      normalized_whole_num = left_fill_number($2, self.extra_vol_num_width)
-      "#{$1}#{normalized_whole_num}"
+    # they sort appropriately.  We just find ALL numbers and
+    # normalize them accordingly, it's good enough! 
+    extra_normalized = extra.gsub(/(\d+)/) do |match|
+      left_fill_number($1, self.extra_vol_num_width)      
     end
 
     # remove all non-alphanumeric
