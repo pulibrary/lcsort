@@ -2,8 +2,15 @@
 
 require 'lcsort/volume_abbreviations'
 
+# The sorting code is organized as a class for code organization
+# and possible future parameterization. 
+#
+#     Lcsort.new.normalize(call)
+#
+# But for convenience and efficiency, you can call as a class method too:
+#
+#    Lcsort.normalize(call)
 class Lcsort
-
   HIGH_CHAR = '~'
 
   LC= /^
@@ -97,10 +104,28 @@ class Lcsort
     # to be padded for sort. Prefix followed by period, optional spacing,
     # and number. Two capturing groups, the prefix as matched, and the number. 
     self.extra_num_regexp = /(\b#{Regexp.union( Lcsort::VolumeAbbreviations )}\. *)(\d+)/
+
+    # Only state should be configuration, not about individual call numbers. 
+    # We re-use this for multiple call numbers, and don't want callnum-specific
+    # state; we also want to ensure it's thread-safe for using between multiple
+    # threads. So freeze it! Doesn't absolutely prevent state changes, but
+    # helps and sends the message. 
+    self.freeze
   end
 
+
+  # Our code is organized in a class, for code organization and
+  # possibility of sub-class and constructor customization in the future. 
+  #
+  # But most people will want to call as a simple class-method. 
+  # Store a singleton instance of Lcsort to let class method
+  # be efficient and not need to instantiate a new one every time. 
+  #
+  # Initialize singleton NOT lazily but here on class def, for
+  # thread safety. 
+  @global = Lcsort.new
   def self.normalize(*args)
-    Lcsort.new.normalize(*args)
+    @global.normalize(*args)
   end
 
   def normalize(cn, opts = {})
