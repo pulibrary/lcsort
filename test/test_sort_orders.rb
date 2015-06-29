@@ -1,5 +1,4 @@
-require 'minitest/autorun'
-require 'lcsort'
+require 'minitest_helper'
 
 # Assorted tests of proper sort orders taken from various places. 
 class TestSortOrders < Minitest::Test

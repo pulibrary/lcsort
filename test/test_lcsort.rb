@@ -1,5 +1,4 @@
-require 'minitest/autorun'
-require 'lcsort'
+require 'minitest_helper'
 
 # We have a few tests for expected normalized output, just for
 # sanity check. But mainly the semantic tests in test_lcsort

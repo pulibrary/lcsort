@@ -1,5 +1,4 @@
-require 'minitest/autorun'
-require 'lcsort'
+require 'minitest_helper'
 
 # Tests for what's current `:bottomout => true` DOING what it's meant to,
 # without worrying about implementation. Argument name may change. 
