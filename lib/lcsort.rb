@@ -109,7 +109,7 @@ class Lcsort
     # Left-fill whole number with preceding 0's to ensure sort,
     # Only needed if present, sort will work right regardless.
     if num
-      normal_str << "%0#{class_whole_width}d" % num.to_s.to_i
+      normal_str << left_fill_number(num, class_whole_width)
     end
 
     # decimal class number needs no fill, add it if we have it.
@@ -154,6 +154,15 @@ class Lcsort
     content.to_s + (padding * fill_spots)
   end
 
+  # Left-pad a whole number with zeroes to specified width
+  def left_fill_number(content, width)
+    content = content.to_s
+    fill_spots = width - content.length
+    fill_spots = 0 if fill_spots < 0
+
+    return ('0' * fill_spots) + content 
+  end
+
   def normalize_cutter(c_alpha_prefix, c_rest)
     return nil if c_alpha_prefix.nil?
 
@@ -167,7 +176,7 @@ class Lcsort
   def normalize_doon(doon)
     return nil if doon.nil?
 
-    self.cutter_prefix_separator + ("%0#{class_whole_width}d" % doon.to_s.to_i)
+    self.cutter_prefix_separator + left_fill_number(doon, 4)
   end
 
   # The 'extra' component is normalized by making it all alphanumeric,
@@ -176,7 +185,7 @@ class Lcsort
     # Left-pad any volume/number type designations with zeros, so
     # they sort appropriately. 
     extra_normalized = extra.gsub(self.extra_num_regexp) do |match|
-      normalized_whole_num = ("%0#{class_whole_width}d" % $2.to_s.to_i)
+      normalized_whole_num = left_fill_number($2, 4)
       "#{$1}#{normalized_whole_num}"
     end
 
