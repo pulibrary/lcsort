@@ -121,7 +121,11 @@ class Lcsort
     @global.normalize(*args)
   end
 
-  def normalize(cn, opts = {})
+  def self.truncated_range_end(*args)
+    @global.truncated_range_end(*args)
+  end
+
+  def normalize(cn, options = {})
     callnum = cn.upcase
 
     match = LC.match(callnum)
@@ -131,8 +135,6 @@ class Lcsort
 
     alpha, num, dec, doon1, c1alpha, c1num, doon2, c2alpha, c2num, c3alpha, c3num, extra = match.captures
 
-    #require 'byebug'
-    #debugger
 
     # We can't handle a class number wider than the space we have
     if num && num.length > self.class_whole_width
@@ -165,25 +167,29 @@ class Lcsort
     normal_str << normalize_cutter(c2alpha, c2num) if c2alpha
     normal_str << normalize_cutter(c3alpha, c3num) if c3alpha
 
-    # If we don't have 'extra' and bottomout was requested,
-    # return with high space to provide range limit going
-    # AFTER what's trucated.
-    if opts[:bottomout] == true && extra.nil?
-      return normal_str << HIGH_CHAR
-    else
-      # require an alpha and a num to be a good call number,
-      # although above in bottomout we'll allow just alpha.
+    normal_str << normalize_extra(extra)           if extra
+
+    # normally we REQUIRE an alpha and number for a good call number,
+    # but for creating truncated_end_ranges, we relax that. 
+    unless options[:range_end_construction]
       unless alpha && num
         return nil
       end
-
-      # Add normalized extra if we've got it
-      if extra
-        normal_str << normalize_extra(extra)
-      end
-      return normal_str
     end
 
+    return normal_str 
+  end
+
+  def truncated_range_end(callnum)
+    # Tell normalize to relax it's restrictions for range_end
+    # construction. 
+    normalized = normalize(callnum, :range_end_construction => true)
+
+    return nil unless normalized
+
+    # We just add a HIGH_CHAR on the end to make sure this sorts
+    # after the original normalized with ANYTHING else on the end. 
+    return normalized + HIGH_CHAR
   end
 
   def right_fill(content, width, padding)

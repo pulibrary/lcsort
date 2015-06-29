@@ -50,7 +50,7 @@ class LcsortTest < Minitest::Test
       ['C1.D11', 'C..0001.D11~'],
       ['d15.4 .D22 1990', 'D..00154.D22.1990~'],
       ['E8 C11 D22',      'E..0008.C11.D22~'], 
-      ['ZA4082G33M434.D54 1998', 'ZA.4082.G33.M434.D54--1998']
+      ['ZA4082G33M434.D54 1998', 'ZA.4082.G33.M434.D54--1998~']
     ].each do |call, normalized|
       assert_normalizes_bottomout_as call, normalized
     end      
@@ -103,7 +103,7 @@ class LcsortTest < Minitest::Test
   end
 
   def assert_normalizes_bottomout_as(callno, expected)
-    actual = Lcsort.normalize(callno, :bottomout => true)
+    actual = Lcsort.truncated_range_end(callno)
     assert_equal expected, actual, "Expected `#{callno}` to end range normalize as `#{expected}` not `#{actual}`"
   end
 
