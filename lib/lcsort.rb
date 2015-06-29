@@ -16,6 +16,12 @@ class Lcsort
         (?:\s*?\.\s*?(\d+))?  # dec
       )?
       \s*
+      (?:         # optional doon1 -- date or other number eg 1991 , 103rd, 103d
+        \.?
+        (\d{1,4})
+        (?:ST|ND|RD|TH|D)?
+      )?
+      \s*
       (?:               # optional cutter
         \.? \s*
         ([A-Z])      # cutter letter  c1alpha
@@ -79,7 +85,7 @@ class Lcsort
       return nil
     end
 
-    alpha, num, dec, c1alpha, c1num, c2alpha, c2num, c3alpha, c3num, extra = match.captures
+    alpha, num, dec, doon1, c1alpha, c1num, c2alpha, c2num, c3alpha, c3num, extra = match.captures
 
     # We can't handle a class number wider than the space we have
     if num && num.length > self.class_whole_width
@@ -101,6 +107,10 @@ class Lcsort
     # decimal class number needs no fill, add it if we have it.
     # relies on fixed width whole number to sort properly.
     normal_str << dec  if dec
+
+    # Add doon1 if present, left-pad to four digits to treat as
+    # whole number.
+    normal_str << normalize_doon(doon1) if doon1
 
     # add cutters only if they are present
     normal_str << normalize_cutter(c1alpha, c1num) if c1alpha
@@ -144,6 +154,12 @@ class Lcsort
     c_rest = c_rest.sub(/(.*\d)([a-zA-Z]{1,2})\Z/, "\\1#{self.cutter_intermediate_separator}\\2")
 
     self.cutter_prefix_separator + c_alpha_prefix + c_rest
+  end
+
+  def normalize_doon(doon)
+    return nil if doon.nil?
+
+    self.cutter_prefix_separator + ("%0#{class_whole_width}d" % doon.to_s.to_i)
   end
 
 end

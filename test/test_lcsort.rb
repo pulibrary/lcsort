@@ -75,7 +75,10 @@ class LcsortTest < Minitest::Test
       ['B 22.3', 'B22.3'],
       ['C1.D11', 'C 1.D11', 'C 1.D11', 'C 1 .D11'],
       ['D15.4 .D22 1990', 'D 15.4 .D22 1990', 'D15.4.D22 1990', 'D15.4.D22 1990'],
-      ['E8 C11 D22', 'E8 .C11 .D22', 'E8 .C11.D22', 'E8 .C11D22', 'E8C11D22']
+      ['E8 C11 D22', 'E8 .C11 .D22', 'E8 .C11.D22', 'E8 .C11D22', 'E8C11D22'],
+      ["KF 4558.2 15th", "KF 4558.2.15th", "KF4558.2.15th"],
+      ["KF 4558 15th .A21", "KF 4558 15th.A21", "KF4558 15th.A21"],
+      ["KF 4558.2 15th .A21", "KF 4558.2 15th.A21", "KF 4558.2.15th.A21"]
     ].each do |list|
       assert_variants_normalize_same(list)
     end

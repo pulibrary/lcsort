@@ -41,9 +41,9 @@ class TestSortOrders < Minitest::Test
         "AB9.22 L3",
         "ABR92.L3",
         "B8.14 L3",
-        #"B9 20th L3",
+        "B9 20th L3",
         "B9 2000",
-        #"B9 2000 35TH",
+        "B9 2000 35TH",
         "B9 2000 L3",
         "B9 L3",
         #"B9 SVAR .L3",
@@ -214,6 +214,32 @@ class TestSortOrders < Minitest::Test
       "QA 101.1 .A102",
       "QA 101.1 .A11"
     ])
+  end
+
+  def test_doon1
+    #"date or other numbers" in first position
+    assert_sorted_order([
+      "KF 4558",
+      "KF 4558 1st",
+      "KF 4558 1st .A92",
+      "KF 4558 1st .B1",
+      "KF 4558 2nd",
+      "KF 4558 3rd",
+      "KF 4558 20th",
+      "KF 4558 101st"
+    ])
+
+    assert_sorted_order([
+      "KF 4558",
+      "KF 4558 1901",
+      "KF 4558 1901 .A92",
+      "KF 4558 1901 .B1",
+      "KF 4558 1930",
+      "KF 4558 1931",
+      "KF 4558 2014",
+      "KF 4558 2015"
+    ])
+
   end
 
 
