@@ -256,7 +256,9 @@ class TestSortOrders < Minitest::Test
 
 
   def assert_sorted_order(array)
-    assert_equal array, array.shuffle.sort_by {|call_num| Lcsort.normalize(call_num)}
+    # shuffle it up a bit deterministically, then sort it, and make sure
+    # it matches original, which was supposed to be in sorted order. 
+    assert_equal array, array.reverse.rotate(array.length - 2).sort_by {|call_num| Lcsort.normalize(call_num)}
   end
 
 end
