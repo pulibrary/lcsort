@@ -35,6 +35,12 @@ class Lcsort
         | \Z)
       )?
       \s*
+      (?:         # optional doon2 -- date or other number eg 1991 , 103rd, 103d
+        \.?
+        (\d{1,4})
+        (?:ST|ND|RD|TH|D)?
+      )?
+      \s*
       (?:               # optional cutter
         \.? \s*
         ([A-Z])      # cutter letter  c2alpha
@@ -105,7 +111,10 @@ class Lcsort
       return nil
     end
 
-    alpha, num, dec, doon1, c1alpha, c1num, c2alpha, c2num, c3alpha, c3num, extra = match.captures
+    alpha, num, dec, doon1, c1alpha, c1num, doon2, c2alpha, c2num, c3alpha, c3num, extra = match.captures
+
+    #require 'byebug'
+    #debugger
 
     # We can't handle a class number wider than the space we have
     if num && num.length > self.class_whole_width
@@ -128,12 +137,13 @@ class Lcsort
     # relies on fixed width whole number to sort properly.
     normal_str << dec  if dec
 
-    # Add doon1 if present, left-pad to four digits to treat as
-    # whole number.
+    # Add cutters and doons in order, if present
     normal_str << normalize_doon(doon1) if doon1
-
-    # add cutters only if they are present
+    
     normal_str << normalize_cutter(c1alpha, c1num) if c1alpha
+
+    normal_str << normalize_doon(doon2) if doon2
+
     normal_str << normalize_cutter(c2alpha, c2num) if c2alpha
     normal_str << normalize_cutter(c3alpha, c3num) if c3alpha
 
@@ -176,7 +186,7 @@ class Lcsort
   end
 
   def normalize_cutter(c_alpha_prefix, c_rest)
-    return nil if c_alpha_prefix.nil?
+    return nil if c_alpha_prefix.nil? || c_rest.nil?
 
     # Put a low separator before alpha suffix if present, to
     # ensure sort.

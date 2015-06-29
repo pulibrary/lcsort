@@ -7,7 +7,7 @@ class TestSortOrders < Minitest::Test
 
   def test_colostate_examples
     # http://lib.colostate.edu/howto/others/callnlce.html
-    assert_sorted_order ["R 169.1 .B59 1990", "R 184.7 .N49", "R 185 .B52x"]
+    assert_sorted_order ["R 169.1 .B59 1990", "R 169.1 .B59 1995 plus extra", "R 169.1 .B59 1996", "R 184.7 .N49", "R 185 .B52x"]
     assert_sorted_order ["TX 719 .M613 1977", "TX 719.M613 1983", "TX719.W47"]
     assert_sorted_order ["R 146.5 .C196", "R 146.61.N49", "R146.93.B9"]
     assert_sorted_order ["R 241 .F2498 1994", "R 241.F5 B297", "R 241 .F5 .B8", "R 241 .J18 1990", "R 418 .P72 P47", "R 2418 .J42 T14"]
@@ -240,6 +240,26 @@ class TestSortOrders < Minitest::Test
       "KF 4558 2015"
     ])
   end
+
+  def test_doon2
+    assert_sorted_order([
+      "A1.2 .A54 4th",
+      "A1.2 .A54 4th 1990 extra stuff",
+      "A1.2 .A54 4th 1991 extra stuff",
+      "A1.2 .A54 4th .A51",
+      "A1.2 .A54 4th .A6 extra stuff",
+      "A1.2 .A54 4th .B6 extra stuff",
+      "A1.2 .A54 4th .B6 .C7 extra stuff",
+      "A1.2 .A54 21st 2010"
+    ])
+
+    assert_sorted_order([
+      "JX 33 .A5 1968 .I31",
+      "JX 33 .A5 1968 .I4",
+      "JX 33 .A5 1969 .I31"
+    ])
+  end
+
 
   def test_volume_extra
     assert_sorted_order([
