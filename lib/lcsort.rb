@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+require 'lcsort/volume_abbreviations'
+
 class Lcsort
 
   LOW_CHAR = ' '
@@ -59,6 +61,7 @@ class Lcsort
 
   attr_accessor :alpha_width, :class_whole_width
   attr_accessor :cutter_prefix_separator, :cutter_intermediate_separator
+  attr_accessor :extra_num_regexp
 
   def initialize()
     self.alpha_width       = 3
@@ -71,6 +74,11 @@ class Lcsort
     # ei as in the 'ab' A234ab. It must be higher ascii value than
     # cutter_prefix_separator
     self.cutter_intermediate_separator = '-'
+
+    # Prefixes in 'extra' that precede whole numbers that need
+    # to be padded for sort. Prefix followed by period, optional spacing,
+    # and number. Two capturing groups, the prefix as matched, and the number. 
+    self.extra_num_regexp = /(\b#{Regexp.union( Lcsort::VolumeAbbreviations )}\. *)(\d+)/
   end
 
   def self.normalize(*args)
@@ -165,7 +173,18 @@ class Lcsort
   # The 'extra' component is normalized by making it all alphanumeric,
   # and adding an ultra low prefix separator. 
   def normalize_extra(extra)
-    (LOW_CHAR + LOW_CHAR + extra.to_s.gsub(/[^A-Z0-9]/, ''))
+    # Left-pad any volume/number type designations with zeros, so
+    # they sort appropriately. 
+    extra_normalized = extra.gsub(self.extra_num_regexp) do |match|
+      normalized_whole_num = ("%0#{class_whole_width}d" % $2.to_s.to_i)
+      "#{$1}#{normalized_whole_num}"
+    end
+
+    # remove all non-alphanumeric
+    extra_normalized = extra_normalized.gsub(/[^A-Z0-9]/, '')
+
+    # Add very low prefix separator
+    return (LOW_CHAR + LOW_CHAR + extra_normalized)
   end
 
 end

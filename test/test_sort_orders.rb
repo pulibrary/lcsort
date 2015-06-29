@@ -239,7 +239,19 @@ class TestSortOrders < Minitest::Test
       "KF 4558 2014",
       "KF 4558 2015"
     ])
+  end
 
+  def test_volume_extra
+    assert_sorted_order([
+      "HQ1101 .D54 v.3 no.3",
+      "HQ1101 .D54 v.3 no.10",
+      "HQ1101 .D54 v.11 no.1"
+    ])
+
+    assert_sorted_order([
+      "BS1965 1902 Bd.2 extra stuff",
+      "BS1965 1902 Bd.10 another extra stuff"
+    ])
   end
 
 
