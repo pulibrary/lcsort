@@ -59,13 +59,15 @@ class Lcsort
       \s*$/x
 
 
-  attr_accessor :alpha_width, :class_whole_width
+  attr_accessor :alpha_width, :class_whole_width, :doon_width, :extra_vol_num_width
   attr_accessor :cutter_prefix_separator, :cutter_intermediate_separator
   attr_accessor :extra_num_regexp
 
   def initialize()
     self.alpha_width       = 3
     self.class_whole_width = 4
+    self.doon_width        = 4
+    self.extra_vol_num_width = 4
 
     # cutter prefix separator must be lower ascii value than digit 0,
     # but higher than cutter_intermediate_separator
@@ -176,7 +178,7 @@ class Lcsort
   def normalize_doon(doon)
     return nil if doon.nil?
 
-    self.cutter_prefix_separator + left_fill_number(doon, 4)
+    self.cutter_prefix_separator + left_fill_number(doon, self.doon_width)
   end
 
   # The 'extra' component is normalized by making it all alphanumeric,
@@ -185,7 +187,7 @@ class Lcsort
     # Left-pad any volume/number type designations with zeros, so
     # they sort appropriately. 
     extra_normalized = extra.gsub(self.extra_num_regexp) do |match|
-      normalized_whole_num = left_fill_number($2, 4)
+      normalized_whole_num = left_fill_number($2, self.extra_vol_num_width)
       "#{$1}#{normalized_whole_num}"
     end
 
