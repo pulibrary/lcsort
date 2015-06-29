@@ -131,7 +131,7 @@ class Lcsort
 
       # Add normalized extra if we've got it
       if extra
-        normal_str << (LOW_CHAR + LOW_CHAR + extra.to_s.gsub(/[^A-Z0-9]/, ''))
+        normal_str << normalize_extra(extra)
       end
       return normal_str
     end
@@ -160,6 +160,12 @@ class Lcsort
     return nil if doon.nil?
 
     self.cutter_prefix_separator + ("%0#{class_whole_width}d" % doon.to_s.to_i)
+  end
+
+  # The 'extra' component is normalized by making it all alphanumeric,
+  # and adding an ultra low prefix separator. 
+  def normalize_extra(extra)
+    (LOW_CHAR + LOW_CHAR + extra.to_s.gsub(/[^A-Z0-9]/, ''))
   end
 
 end
