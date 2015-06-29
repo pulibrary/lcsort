@@ -4,10 +4,7 @@ require 'lcsort/volume_abbreviations'
 
 class Lcsort
 
-  LOW_CHAR = ' '
   HIGH_CHAR = '~'
-  LOW_DIGIT = '0'
-  HIGH_DIGIT = '9'
 
   LC= /^
       \s*
@@ -60,7 +57,7 @@ class Lcsort
 
 
   attr_accessor :alpha_width, :class_whole_width, :doon_width, :extra_vol_num_width
-  attr_accessor :cutter_prefix_separator, :cutter_intermediate_separator
+  attr_accessor :low_prefix_separator, :cutter_extralow_separator, :class_letter_padding, :extra_separator
   attr_accessor :extra_num_regexp
 
   def initialize()
@@ -70,12 +67,25 @@ class Lcsort
     self.extra_vol_num_width = 4
 
     # cutter prefix separator must be lower ascii value than digit 0,
-    # but higher than cutter_intermediate_separator
-    self.cutter_prefix_separator       = '.'
-    # cutter intermediate separator separates cutter letter suffixes
-    # ei as in the 'ab' A234ab. It must be higher ascii value than
-    # cutter_prefix_separator
-    self.cutter_intermediate_separator = '-'
+    # but higher than cutter_extralow_separator. `.` gives us
+    # something that makes debugging easy and doesn't need to be
+    # URI-escaped, which is nice. 
+    self.low_prefix_separator       = '.'
+    # cutter extralow separator separates cutter letter suffixes
+    # ei as in the 'ab' A234ab. It must be LOWER ascii value than
+    # low_prefix_separator to make sort work. 
+    # Could use space ` `, but `-` is
+    # less confusing debugging and nice that it doesn't need to be URI-escaped. 
+    self.cutter_extralow_separator = '-'
+
+    # Using anything less than ascii 0 should work, but `.` is nice for
+    # debugging. 
+    self.class_letter_padding      = '.'
+
+    # Extra separator needs to be lower than our other separators,
+    # especially cutter_extralow_separator. 
+    # Doubling the cutter_extralow_separator works. 
+    self.extra_separator           = (self.cutter_extralow_separator * 2)
 
     # Prefixes in 'extra' that precede whole numbers that need
     # to be padded for sort. Prefix followed by period, optional spacing,
@@ -106,7 +116,7 @@ class Lcsort
 
     # Right fill alpha class with separators, to ensure sort, we
     # always have alpha.
-    normal_str << right_fill( alpha, alpha_width,        LOW_CHAR)
+    normal_str << right_fill( alpha, alpha_width,        self.class_letter_padding)
 
     # Left-fill whole number with preceding 0's to ensure sort,
     # Only needed if present, sort will work right regardless.
@@ -170,15 +180,15 @@ class Lcsort
 
     # Put a low separator before alpha suffix if present, to
     # ensure sort.
-    c_rest = c_rest.sub(/(.*\d)([a-zA-Z]{1,2})\Z/, "\\1#{self.cutter_intermediate_separator}\\2")
+    c_rest = c_rest.sub(/(.*\d)([a-zA-Z]{1,2})\Z/, "\\1#{self.cutter_extralow_separator}\\2")
 
-    self.cutter_prefix_separator + c_alpha_prefix + c_rest
+    self.low_prefix_separator + c_alpha_prefix + c_rest
   end
 
   def normalize_doon(doon)
     return nil if doon.nil?
 
-    self.cutter_prefix_separator + left_fill_number(doon, self.doon_width)
+    self.low_prefix_separator + left_fill_number(doon, self.doon_width)
   end
 
   # The 'extra' component is normalized by making it all alphanumeric,
@@ -195,7 +205,7 @@ class Lcsort
     extra_normalized = extra_normalized.gsub(/[^A-Z0-9]/, '')
 
     # Add very low prefix separator
-    return (LOW_CHAR + LOW_CHAR + extra_normalized)
+    return (self.extra_separator + extra_normalized)
   end
 
 end

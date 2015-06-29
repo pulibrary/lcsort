@@ -15,14 +15,15 @@ class LcsortTest < Minitest::Test
   def test_normalization
     # pairs, left hand normalizes to right-hand
     [ 
-      ['A1',      'A  0001'],
-      ['B22.3',   'B  00223'],
-      ['C1.D11',  'C  0001.D11'],
-      ['d15.4 .D22 1990', 'D  00154.D22  1990'],  
-      ['d15.123456 .D22 1990', 'D  0015123456.D22  1990'],
-      ['E8 C11 D22',      'E  0008.C11.D22'],
-      ['ZA4082G33M434.D54 1998', 'ZA 4082.G33.M434.D54  1998'],
-      ["HQ1101 .D54 v.3 no.3", "HQ 1101.D54  V0003NO0003"]
+      ['A1',        'A..0001'],
+      ['B22.3',     'B..00223'],
+      ['C1.D11',    'C..0001.D11'],
+      ['ABA 12.12', 'ABA001212'],
+      ['d15.4 .D22 1990', 'D..00154.D22--1990'],  
+      ['d15.123456 .D22 1990', 'D..0015123456.D22--1990'],
+      ['E8 C11 D22',      'E..0008.C11.D22'],
+      ['ZA4082G33M434.D54 1998', 'ZA.4082.G33.M434.D54--1998'],
+      ["HQ1101 .D54 v.3 no.3", "HQ.1101.D54--V0003NO0003"]
     ].each do |call, normalized|
       assert_normalizes_as call, normalized
     end
@@ -31,10 +32,10 @@ class LcsortTest < Minitest::Test
   def test_cutter_suffixes
     # pairs, left hand normalizes to right-hand
     [ 
-      ['A1 .A1a',      'A  0001.A1-A'],
-      ['A1 .A1 .B32a', 'A  0001.A1.B32-A'],
-      ['A1 .A1a .B32a .C33 extra', 'A  0001.A1-A.B32-A.C33  EXTRA'],
-      ['A1 .A3 .B4 .C33ab extra',  'A  0001.A3.B4.C33-AB  EXTRA']
+      ['A1 .A1a',      'A..0001.A1-A'],
+      ['A1 .A1 .B32a', 'A..0001.A1.B32-A'],
+      ['A1 .A1a .B32a .C33 extra', 'A..0001.A1-A.B32-A.C33--EXTRA'],
+      ['A1 .A3 .B4 .C33ab extra',  'A..0001.A3.B4.C33-AB--EXTRA']
     ].each do |call, normalized|
       assert_normalizes_as call, normalized
     end
@@ -43,12 +44,12 @@ class LcsortTest < Minitest::Test
   def test_endrange
     # pairs of call number, and expected bottomout/endrange normalized
     [
-      ['A1',     'A  0001~'],
-      ['B22.3',  'B  00223~'],
-      ['C1.D11', 'C  0001.D11~'],
-      ['d15.4 .D22 1990', 'D  00154.D22  1990'],
-      ['E8 C11 D22',      'E  0008.C11.D22~'], 
-      ['ZA4082G33M434.D54 1998', 'ZA 4082.G33.M434.D54  1998']
+      ['A1',     'A..0001~'],
+      ['B22.3',  'B..00223~'],
+      ['C1.D11', 'C..0001.D11~'],
+      ['d15.4 .D22 1990', 'D..00154.D22--1990'],
+      ['E8 C11 D22',      'E..0008.C11.D22~'], 
+      ['ZA4082G33M434.D54 1998', 'ZA.4082.G33.M434.D54--1998']
     ].each do |call, normalized|
       assert_normalizes_bottomout_as call, normalized
     end      
