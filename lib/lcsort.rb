@@ -100,8 +100,7 @@ class Lcsort
 
     # Needs to sort LOWER than extra separator, at least in cases
     # where there's no extra. Three dashes would work, but so does
-    # comma, which is nice for human debugging and doesn't need URI-escape
-    # either. 
+    # comma, why not. 
     self.append_suffix_separator   = ","
 
     # Only state should be configuration, not about individual call numbers. 
