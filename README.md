@@ -10,6 +10,11 @@ numbers should sort in.
     # It's often useful to store the sort_key in a db
     sort_key = Lcsort.normalize(callnum)
 
+If the input can't be recognized as an LC Call Number, `nil` will be returned. 
+
+This code is intended for ascii-only input, if you have UTF-8 in your
+call numbers, we don't know what will happen. 
+
     # Or if you have a list of call numbers in memory, easy
     # enough to just sort them in memory:
     call_num_array.sort_by {|callnum| Lcsort.normalize(callnum) }
@@ -49,3 +54,19 @@ from those beginning with `AB 101` to `AB 500`:
 At the moment, `truncated_range_end` actually pretty much just adds an `~` onto the end
 of the normalized sort key. But it did more complicated things in past versions of
 the normaliation algorithm, and we do have tests ensuring it finds what is expected. 
+
+## append_suffix
+
+Sometimes you want to add something on to the end of a normalized call number,
+as a payload, or to ensure normalized sort key uniqueness. 
+
+You can pass an :append_suffix to have it appended in a way that won't
+otherwise change the sort order of the original call number. 
+
+I use this to add the bib ID on to the end of the normalized sort key,
+because if two bibs have identical call numbers, I want to avoid 
+normalized sort key collision, because my functions work better with
+all unique sort keys. 
+
+     sortkey = Lcsort.normalize(callnumber, :append_suffix => bibID)
+

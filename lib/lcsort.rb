@@ -68,7 +68,7 @@ class Lcsort
 
 
   attr_accessor :alpha_width, :class_whole_width, :doon_width, :extra_vol_num_width
-  attr_accessor :low_prefix_separator, :cutter_extralow_separator, :class_letter_padding, :extra_separator
+  attr_accessor :low_prefix_separator, :cutter_extralow_separator, :class_letter_padding, :extra_separator, :append_suffix_separator
   attr_accessor :extra_num_regexp
 
   def initialize()
@@ -97,6 +97,12 @@ class Lcsort
     # especially cutter_extralow_separator. 
     # Doubling the cutter_extralow_separator works. 
     self.extra_separator           = (self.cutter_extralow_separator * 2)
+
+    # Needs to sort LOWER than extra separator, at least in cases
+    # where there's no extra. Three dashes would work, but so does
+    # comma, which is nice for human debugging and doesn't need URI-escape
+    # either. 
+    self.append_suffix_separator   = ","
 
     # Only state should be configuration, not about individual call numbers. 
     # We re-use this for multiple call numbers, and don't want callnum-specific
@@ -169,6 +175,8 @@ class Lcsort
 
     normal_str << normalize_extra(extra)           if extra
 
+    normal_str << normalize_append_suffix(options[:append_suffix]) if options[:append_suffix]
+
     # normally we REQUIRE an alpha and number for a good call number,
     # but for creating truncated_end_ranges, we relax that. 
     unless options[:range_end_construction]
@@ -240,6 +248,10 @@ class Lcsort
 
     # Add very low prefix separator
     return (self.extra_separator + extra_normalized)
+  end
+
+  def normalize_append_suffix(suffix)
+    self.append_suffix_separator + suffix
   end
 
 end
