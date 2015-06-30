@@ -99,9 +99,10 @@ class Lcsort
     self.extra_separator           = (self.cutter_extralow_separator * 2)
 
     # Needs to sort LOWER than extra separator, at least in cases
-    # where there's no extra. Three dashes would work, but so does
-    # comma, why not. 
-    self.append_suffix_separator   = ","
+    # where there's no extra. We tried comma, but MySQL did weird
+    # things under utf8 collation. Let's see if it works better with
+    # three dashes.
+    self.append_suffix_separator   = (self.cutter_extralow_separator * 3)
 
     # Only state should be configuration, not about individual call numbers. 
     # We re-use this for multiple call numbers, and don't want callnum-specific
