@@ -42,12 +42,12 @@ to find all call numbers beginning with, say, `EG 101`.  So that might include `
 
 The `truncated_range_end` method gives you a proper ending range to get what you want, say:
 
-   sort_key >= #{Lcsort.normalize("EG 101")} AND sort_key <= #{Lcsort.truncated_range_end('EG 101')}
+    sort_key >= #{Lcsort.normalize("EG 101")} AND sort_key <= #{Lcsort.truncated_range_end('EG 101')}
 
 This can also be used for finding a range of call numbers. Say you want all call numbers
 from those beginning with `AB 101` to `AB 500`:
 
-   sort_key >= #{Lcsort.normalize("AB 101")} AND sort_key <= #{Lcsort.truncated_range_end('AB 500')}
+    sort_key >= #{Lcsort.normalize("AB 101")} AND sort_key <= #{Lcsort.truncated_range_end('AB 500')}
 
 `truncated_range_end` works with as many or as few call number components as you want. `Lcsort.truncated_range_end('AB 101.1')` will find `AB 101.123` or `AB 101.1 .A5` too. `Lcsort.truncated_range_end("AB 101 .C45")` will find `AB 101 .C456`, `AB 101 .C45 .B5`, etc. 
 
