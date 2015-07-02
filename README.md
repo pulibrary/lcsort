@@ -70,3 +70,7 @@ all unique sort keys.
 
      sortkey = Lcsort.normalize(callnumber, :append_suffix => bibID)
 
+## Acknowledgement
+
+Original regex and code by Bill Dueber. Original port to ruby by Nikitas Tampakis.
+LC handling advice from Naomi Dushay and her code. 
