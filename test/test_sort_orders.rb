@@ -1,6 +1,6 @@
 require 'minitest_helper'
 
-# Assorted tests of proper sort orders taken from various places. 
+# Assorted tests of proper sort orders taken from various places.
 class TestSortOrders < Minitest::Test
 
 
@@ -25,14 +25,14 @@ class TestSortOrders < Minitest::Test
   end
 
   def test_stanford_examples
-    # some really terrible examples from 
+    # some really terrible examples from
     # https://github.com/sul-dlss/solrmarc-sw/blob/0e3c0e8cb3378b2992edc28b25c955943df67338/core/test/src/org/solrmarc/tools/CallNumberUnitTests.java#L1114
-    
+
     # We are taking from Stanford's "currentOrderList", which even in Stanford's
     # code diverges from what they consider "properOrderList"
 
     # We can't neccesarily sort all of Stanford's current order list the way
-    # Stanford does either -- we comment out elements that we can't handle below. 
+    # Stanford does either -- we comment out elements that we can't handle below.
 
     # Not sorting "35th" properly yet, at least according to stanford's librarians
     list1 = [
@@ -85,13 +85,13 @@ class TestSortOrders < Minitest::Test
         "M5 .L3 2000 .K2 1880",
 
         # first cutter L3 vol/part info: K.2,13 2001
-        # LCsort, nope, can't do this. 
+        # LCsort, nope, can't do this.
         #"M5 .L3 K.2,13 2001"
     ]
     assert_sorted_order list3
 
     # I think we're just lucky on MOST of these, we can't
-    # really do that volume information right. many commented out. 
+    # really do that volume information right. many commented out.
     list4 = [
         # first cutter L3 second cutter K2
         "M5.L3.K2",
@@ -107,7 +107,7 @@ class TestSortOrders < Minitest::Test
         "M5 .L3 K2 NO.1 1880", # vol info NO.1
         "M5 .L3 K2 OP.7:NO.6 1880",
         "M5 .L3 K2 OP.7:NO.6 1882",
-        "M5 .L3 K2 OP.7:NO.51 1880",  
+        "M5 .L3 K2 OP.7:NO.51 1880",
         "M5 .L3 K2 OP.8",
         "M5 .L3 K2 OP.79",
         "M5 .L3 K2 OP.789",
@@ -131,7 +131,7 @@ class TestSortOrders < Minitest::Test
     ]
     assert_sorted_order list5
 
-    list6 = [        
+    list6 = [
         # back to solid territory
         "M5 L31",
         "M5 L31902",
@@ -156,13 +156,13 @@ class TestSortOrders < Minitest::Test
   end
 
   # LC call numbers can have a 'date or other number', usually
-  # a year, in a cutter position, most commonly first. 
+  # a year, in a cutter position, most commonly first.
   #
   # These currently sort correctly more or less accidentally --
   # they are not parsed correctly, everything including and after
-  # the year ends up in 'extra', but they sort correctly ANYWAY. 
+  # the year ends up in 'extra', but they sort correctly ANYWAY.
   #
-  # We have a test to make sure it stays that way. 
+  # We have a test to make sure it stays that way.
   def test_year_cutter
     list = [
             "PX 101.1",
@@ -182,14 +182,14 @@ class TestSortOrders < Minitest::Test
   end
 
   # Make sure extra content sorts appropriately, BEFORE actual
-  # subsequent call number. 
+  # subsequent call number.
   def test_extras
     assert_sorted_order([
       "R 241",
       "R 241 extra extra",
       "R 241 .A2498",
       "R 241 .A2498 extra extra",
-      "R 241 .G1", 
+      "R 241 .G1",
       "R 241 .G1 extra extra",
       "R 241 .G1 .A1",
       "R 241 .G1 .A1 extra extra",
@@ -257,6 +257,16 @@ class TestSortOrders < Minitest::Test
       "JX 33 .A5 1968 .I4",
       "JX 33 .A5 1969 .I31"
     ])
+
+    assert_sorted_order([
+      "M3 G32 1927q vol. 4",
+      "M3 G32 1934q vol. 7",
+      "M3 .G32 1951q vol. 3",
+      "M3 .G32 1966q vol. 2",
+      "M3 .G32 1972q",
+      "M3 G32 1984q vol. 6",
+      "M3 G32 2017q vol. 5"
+    ])
   end
 
 
@@ -276,7 +286,7 @@ class TestSortOrders < Minitest::Test
 
   def assert_sorted_order(array)
     # shuffle it up a bit deterministically, then sort it, and make sure
-    # it matches original, which was supposed to be in sorted order. 
+    # it matches original, which was supposed to be in sorted order.
     assert_equal array, array.reverse.rotate(array.length - 2).sort_by {|call_num| Lcsort.normalize(call_num)}
   end
 
