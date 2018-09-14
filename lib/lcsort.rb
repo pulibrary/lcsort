@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 # The sorting code is organized as a class for code organization
-# and possible future parameterization. 
+# and possible future parameterization.
 #
 #     Lcsort.new.normalize(call)
 #
@@ -43,7 +43,7 @@ class Lcsort
       (?:         # optional doon2 -- date or other number eg 1991 , 103rd, 103d
         \.?
         (\d{1,4})
-        (?:ST|ND|RD|TH|D)?
+        (?:ST|ND|RD|TH|D|Q)?
       )?
       \s*
       (?:               # optional cutter
@@ -80,22 +80,22 @@ class Lcsort
     # cutter prefix separator must be lower ascii value than digit 0,
     # but higher than cutter_extralow_separator. `.` gives us
     # something that makes debugging easy and doesn't need to be
-    # URI-escaped, which is nice. 
+    # URI-escaped, which is nice.
     self.low_prefix_separator       = '.'
     # cutter extralow separator separates cutter letter suffixes
     # ei as in the 'ab' A234ab. It must be LOWER ascii value than
-    # low_prefix_separator to make sort work. 
+    # low_prefix_separator to make sort work.
     # Could use space ` `, but `-` is
-    # less confusing debugging and nice that it doesn't need to be URI-escaped. 
+    # less confusing debugging and nice that it doesn't need to be URI-escaped.
     self.cutter_extralow_separator = '-'
 
     # Using anything less than ascii 0 should work, but `.` is nice for
-    # debugging. 
+    # debugging.
     self.class_letter_padding      = '.'
 
     # Extra separator needs to be lower than our other separators,
-    # especially cutter_extralow_separator. 
-    # Doubling the cutter_extralow_separator works. 
+    # especially cutter_extralow_separator.
+    # Doubling the cutter_extralow_separator works.
     self.extra_separator           = (self.cutter_extralow_separator * 2)
 
     # Needs to sort LOWER than extra separator, at least in cases
@@ -104,24 +104,24 @@ class Lcsort
     # three dashes.
     self.append_suffix_separator   = (self.cutter_extralow_separator * 3)
 
-    # Only state should be configuration, not about individual call numbers. 
+    # Only state should be configuration, not about individual call numbers.
     # We re-use this for multiple call numbers, and don't want callnum-specific
     # state; we also want to ensure it's thread-safe for using between multiple
     # threads. So freeze it! Doesn't absolutely prevent state changes, but
-    # helps and sends the message. 
+    # helps and sends the message.
     self.freeze
   end
 
 
   # Our code is organized in a class, for code organization and
-  # possibility of sub-class and constructor customization in the future. 
+  # possibility of sub-class and constructor customization in the future.
   #
-  # But most people will want to call as a simple class-method. 
+  # But most people will want to call as a simple class-method.
   # Store a singleton instance of Lcsort to let class method
-  # be efficient and not need to instantiate a new one every time. 
+  # be efficient and not need to instantiate a new one every time.
   #
   # Initialize singleton NOT lazily but here on class def, for
-  # thread safety. 
+  # thread safety.
   @global = Lcsort.new
   def self.normalize(*args)
     @global.normalize(*args)
@@ -165,7 +165,7 @@ class Lcsort
 
     # Add cutters and doons in order, if present
     normal_str << normalize_doon(doon1) if doon1
-    
+
     normal_str << normalize_cutter(c1alpha, c1num) if c1alpha
 
     normal_str << normalize_doon(doon2) if doon2
@@ -178,25 +178,25 @@ class Lcsort
     normal_str << normalize_append_suffix(options[:append_suffix]) if options[:append_suffix]
 
     # normally we REQUIRE an alpha and number for a good call number,
-    # but for creating truncated_end_ranges, we relax that. 
+    # but for creating truncated_end_ranges, we relax that.
     unless options[:range_end_construction]
       unless alpha && num
         return nil
       end
     end
 
-    return normal_str 
+    return normal_str
   end
 
   def truncated_range_end(callnum)
     # Tell normalize to relax it's restrictions for range_end
-    # construction. 
+    # construction.
     normalized = normalize(callnum, :range_end_construction => true)
 
     return nil unless normalized
 
     # We just add a HIGH_CHAR on the end to make sure this sorts
-    # after the original normalized with ANYTHING else on the end. 
+    # after the original normalized with ANYTHING else on the end.
     return normalized + HIGH_CHAR
   end
 
@@ -214,7 +214,7 @@ class Lcsort
     fill_spots = width - content.length
     fill_spots = 0 if fill_spots < 0
 
-    return ('0' * fill_spots) + content 
+    return ('0' * fill_spots) + content
   end
 
   def normalize_cutter(c_alpha_prefix, c_rest)
@@ -234,13 +234,13 @@ class Lcsort
   end
 
   # The 'extra' component is normalized by making it all alphanumeric,
-  # and adding an ultra low prefix separator. 
+  # and adding an ultra low prefix separator.
   def normalize_extra(extra)
     # Left-pad any volume/number type designations with zeros, so
     # they sort appropriately.  We just find ALL numbers and
-    # normalize them accordingly, it's good enough! 
+    # normalize them accordingly, it's good enough!
     extra_normalized = extra.gsub(/(\d+)/) do |match|
-      left_fill_number($1, self.extra_vol_num_width)      
+      left_fill_number($1, self.extra_vol_num_width)
     end
 
     # remove all non-alphanumeric
